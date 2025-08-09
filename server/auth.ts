@@ -113,6 +113,7 @@ export function setupAuth(app: Express) {
         if (err) return next(err);
         res.status(201).json({
           id: user.id,
+          username: user.username,
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
@@ -122,7 +123,7 @@ export function setupAuth(app: Express) {
       });
     } catch (error) {
       console.error("Registration error:", error);
-      res.status(500).json({ message: "Registration failed" });
+      res.status(500).json({ message: "Registration failed", error: error.message });
     }
   });
 
@@ -138,6 +139,7 @@ export function setupAuth(app: Express) {
         if (err) return next(err);
         res.json({
           id: user.id,
+          username: user.username,
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
@@ -162,9 +164,10 @@ export function setupAuth(app: Express) {
       return res.status(401).json({ message: "Unauthorized" });
     }
     
-    const user = req.user as User;
+    const user = req.user as SelectUser;
     res.json({
       id: user.id,
+      username: user.username,
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
