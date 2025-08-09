@@ -8,7 +8,7 @@ import NotFound from "@/pages/not-found";
 
 // Import pages
 import Landing from "@/pages/landing";
-import AuthPage from "@/pages/auth";
+import SimpleAuth from "@/pages/simple-auth";
 import Setup from "@/pages/setup";
 import SuperAdminDashboard from "@/pages/superadmin/dashboard";
 import SuperAdminTenants from "@/pages/superadmin/tenants";
@@ -39,17 +39,17 @@ function Router() {
       <Route path="/setup" component={Setup} />
       {!isAuthenticated ? (
         <>
-          <Route path="/auth" component={AuthPage} />
+          <Route path="/auth" component={SimpleAuth} />
           <Route path="/" component={Landing} />
         </>
-      ) : user?.role === 'superadmin' ? (
+      ) : (user as any)?.role === 'superadmin' ? (
         <>
           <Route path="/" component={SuperAdminDashboard} />
           <Route path="/tenants" component={SuperAdminTenants} />
           <Route path="/billing" component={SuperAdminBilling} />
           <Route path="/settings" component={SuperAdminSettings} />
         </>
-      ) : user?.tenantId ? (
+      ) : (user as any)?.tenantId ? (
         <>
           <Route path="/" component={BusinessDashboard} />
           <Route path="/chatbot-designer" component={ChatbotDesigner} />
