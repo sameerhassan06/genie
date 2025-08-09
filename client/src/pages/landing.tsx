@@ -18,9 +18,14 @@ export default function Landing() {
             </div>
             <span className="text-xl font-bold text-white">ChatBot Pro</span>
           </div>
-          <Button onClick={handleLogin} variant="outline" className="text-white border-white hover:bg-white hover:text-gray-900">
-            Sign In
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => window.location.href = '/setup'} variant="outline" className="text-white border-white hover:bg-white hover:text-gray-900">
+              Setup
+            </Button>
+            <Button onClick={handleLogin} variant="outline" className="text-white border-white hover:bg-white hover:text-gray-900">
+              Sign In
+            </Button>
+          </div>
         </nav>
       </header>
 

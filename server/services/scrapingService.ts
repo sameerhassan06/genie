@@ -1,168 +1,16 @@
-import puppeteer from "puppeteer";
+import puppeteer from 'puppeteer';
+import { storage } from '../storage';
+import type { InsertWebsiteContent } from '@shared/schema';
 
 export class ScrapingService {
-  async scrapeWebsite(url: string) {
+  async scrapeWebsite(url: string, tenantId: string): Promise<{
+    success: boolean;
+    pages: number;
+    error?: string;
+  }> {
     let browser;
-    
-    try {
-      browser = await puppeteer.launch({
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-      });
+    let scrapedPages = 0;
 
-      const page = await browser.newPage();
-      
-      // Set user agent to avoid being blocked
-      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
-      
-      await page.goto(url, { 
-        waitUntil: 'networkidle2',
-        timeout: 30000 
-      });
-
-      // Extract content
-      const content = await page.evaluate(() => {
-        // Remove script and style elements
-        const scripts = document.querySelectorAll('script, style, nav, footer, .cookie-banner, .advertisement');
-        scripts.forEach(el => el.remove());
-
-        // Get title
-        const title = document.title || '';
-
-        // Get main content
-        const contentSelectors = [
-          'main',
-          '[role="main"]', 
-          '.content',
-          '.main-content',
-          'article',
-          '.post-content',
-          '.entry-content'
-        ];
-
-        let mainContent = '';
-        
-        for (const selector of contentSelectors) {
-          const element = document.querySelector(selector);
-          if (element) {
-            mainContent = element.innerText || '';
-            break;
-          }
-        }
-
-        // Fallback to body if no main content found
-        if (!mainContent) {
-          mainContent = document.body.innerText || '';
-        }
-
-        // Clean up the text
-        const cleanText = mainContent
-          .replace(/\s+/g, ' ')
-          .replace(/\n\s*\n/g, '\n')
-          .trim();
-
-        return {
-          title,
-          content: cleanText.substring(0, 10000), // Limit content size
-          url: window.location.href
-        };
-      });
-
-      return content;
-    } catch (error) {
-      console.error("Web scraping error:", error);
-      throw new Error(`Failed to scrape website: ${error.message}`);
-    } finally {
-      if (browser) {
-        await browser.close();
-      }
-    }
-  }
-
-  async scrapeMultiplePages(baseUrl: string, maxPages: number = 10) {
-    let browser;
-    const results = [];
-    
-    try {
-      browser = await puppeteer.launch({
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-      });
-
-      const page = await browser.newPage();
-      await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36');
-      
-      const visitedUrls = new Set();
-      const urlsToVisit = [baseUrl];
-
-      while (urlsToVisit.length > 0 && results.length < maxPages) {
-        const currentUrl = urlsToVisit.shift();
-        
-        if (!currentUrl || visitedUrls.has(currentUrl)) {
-          continue;
-        }
-
-        visitedUrls.add(currentUrl);
-
-        try {
-          await page.goto(currentUrl, { 
-            waitUntil: 'networkidle2',
-            timeout: 15000 
-          });
-
-          // Extract content and links
-          const data = await page.evaluate((baseUrl) => {
-            // Remove unwanted elements
-            const scripts = document.querySelectorAll('script, style, nav, footer, .cookie-banner, .advertisement');
-            scripts.forEach(el => el.remove());
-
-            const title = document.title || '';
-            
-            const contentElement = document.querySelector('main, [role="main"], .content, .main-content, article') || document.body;
-            const content = contentElement ? contentElement.innerText.replace(/\s+/g, ' ').trim() : '';
-
-            // Find internal links
-            const links = Array.from(document.querySelectorAll('a[href]'))
-              .map(a => (a as HTMLAnchorElement).href)
-              .filter(href => href.startsWith(baseUrl) && !href.includes('#'))
-              .slice(0, 5); // Limit links per page
-
-            return {
-              title,
-              content: content.substring(0, 5000),
-              url: window.location.href,
-              links
-            };
-          }, baseUrl);
-
-          results.push(data);
-
-          // Add new URLs to visit
-          data.links.forEach(link => {
-            if (!visitedUrls.has(link) && urlsToVisit.length < 20) {
-              urlsToVisit.push(link);
-            }
-          });
-
-        } catch (pageError) {
-          console.error(`Error scraping ${currentUrl}:`, pageError);
-        }
-      }
-
-      return results;
-    } catch (error) {
-      console.error("Multi-page scraping error:", error);
-      throw new Error(`Failed to scrape website: ${error.message}`);
-    } finally {
-      if (browser) {
-        await browser.close();
-      }
-    }
-  }
-
-  async extractContactInfo(url: string) {
-    let browser;
-    
     try {
       browser = await puppeteer.launch({
         headless: true,
@@ -172,36 +20,117 @@ export class ScrapingService {
       const page = await browser.newPage();
       await page.goto(url, { waitUntil: 'networkidle2' });
 
-      const contactInfo = await page.evaluate(() => {
-        const text = document.body.innerText;
+      // Extract main content
+      const content = await page.evaluate(() => {
+        // Remove script and style elements
+        const scripts = document.querySelectorAll('script, style');
+        scripts.forEach(el => el.remove());
+
+        // Get main content
+        const main = document.querySelector('main') || 
+                    document.querySelector('[role="main"]') || 
+                    document.querySelector('body');
         
-        // Extract email addresses
-        const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
-        const emails = text.match(emailRegex) || [];
-
-        // Extract phone numbers
-        const phoneRegex = /(?:\+?1[-.\s]?)?\(?([0-9]{3})\)?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4})/g;
-        const phones = text.match(phoneRegex) || [];
-
-        // Extract addresses (simple heuristic)
-        const addressRegex = /\d+\s+[\w\s]+(?:Street|St|Avenue|Ave|Road|Rd|Boulevard|Blvd|Lane|Ln|Drive|Dr|Court|Ct|Place|Pl)/gi;
-        const addresses = text.match(addressRegex) || [];
-
         return {
-          emails: [...new Set(emails)],
-          phones: [...new Set(phones)],
-          addresses: [...new Set(addresses)]
+          title: document.title,
+          content: main?.textContent?.trim() || '',
+          url: window.location.href
         };
       });
 
-      return contactInfo;
+      // Store the scraped content
+      const websiteContent: InsertWebsiteContent = {
+        tenantId,
+        url: content.url,
+        title: content.title,
+        content: content.content,
+        contentType: 'webpage',
+        isProcessed: false
+      };
+
+      await storage.createWebsiteContent(websiteContent);
+      scrapedPages = 1;
+
+      // Try to find and scrape linked pages
+      const links = await page.$$eval('a[href]', (anchors) =>
+        anchors
+          .map(anchor => anchor.getAttribute('href'))
+          .filter(href => href && !href.startsWith('#') && !href.startsWith('mailto:'))
+          .slice(0, 10) // Limit to 10 additional pages
+      );
+
+      for (const link of links) {
+        try {
+          let fullUrl = link;
+          if (link.startsWith('/')) {
+            const baseUrl = new URL(url);
+            fullUrl = `${baseUrl.protocol}//${baseUrl.host}${link}`;
+          } else if (!link.startsWith('http')) {
+            continue;
+          }
+
+          await page.goto(fullUrl, { waitUntil: 'networkidle2', timeout: 10000 });
+          
+          const pageContent = await page.evaluate(() => {
+            const scripts = document.querySelectorAll('script, style');
+            scripts.forEach(el => el.remove());
+
+            const main = document.querySelector('main') || 
+                        document.querySelector('[role="main"]') || 
+                        document.querySelector('body');
+            
+            return {
+              title: document.title,
+              content: main?.textContent?.trim() || '',
+              url: window.location.href
+            };
+          });
+
+          const linkedContent: InsertWebsiteContent = {
+            tenantId,
+            url: pageContent.url,
+            title: pageContent.title,
+            content: pageContent.content,
+            contentType: 'webpage',
+            isProcessed: false
+          };
+
+          await storage.createWebsiteContent(linkedContent);
+          scrapedPages++;
+        } catch (error) {
+          console.log(`Failed to scrape linked page ${link}:`, error);
+          continue;
+        }
+      }
+
+      return {
+        success: true,
+        pages: scrapedPages
+      };
+
     } catch (error) {
-      console.error("Contact extraction error:", error);
-      return { emails: [], phones: [], addresses: [] };
+      console.error('Scraping error:', error);
+      return {
+        success: false,
+        pages: scrapedPages,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
     } finally {
       if (browser) {
         await browser.close();
       }
+    }
+  }
+
+  async processScrapedContent(tenantId: string): Promise<void> {
+    const unprocessedContent = await storage.getWebsiteContentByTenant(tenantId);
+    
+    for (const content of unprocessedContent.filter(c => !c.isProcessed)) {
+      // Here you could add AI processing to extract key information
+      // For now, just mark as processed
+      await storage.updateWebsiteContent(content.id, {
+        isProcessed: true
+      }, tenantId);
     }
   }
 }

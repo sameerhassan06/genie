@@ -9,15 +9,7 @@ import { scrapingService } from "./services/scrapingService";
 import { insertTenantSchema, insertChatbotSchema, insertLeadSchema, insertAppointmentSchema, insertServiceSchema, insertKnowledgeBaseSchema } from "@shared/schema";
 
 interface AuthenticatedRequest extends Request {
-  user?: {
-    claims: {
-      sub: string;
-      email?: string;
-      first_name?: string;
-      last_name?: string;
-      profile_image_url?: string;
-    };
-  };
+  user?: any;
 }
 
 // Middleware to check if user is superadmin
