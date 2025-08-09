@@ -1,12 +1,7 @@
-// Vercel serverless function entry point
-import express from 'express';
-import { registerRoutes } from '../server/routes.js';
+// This file is not needed for static deployment
+// The platform will be deployed as a static frontend-only app
+// Backend functionality will need to be separated or use a different deployment strategy
 
-const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-// Initialize routes
-await registerRoutes(app);
-
-export default app;
+export default function handler(req: any, res: any) {
+  res.status(200).json({ message: 'API not available in static deployment' });
+}
