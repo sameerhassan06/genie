@@ -27,7 +27,10 @@ export default function SuperAdminTenants() {
     name: '',
     domain: '',
     website: '',
-    subscriptionPlan: 'starter'
+    subscriptionPlan: 'starter',
+    adminEmail: '',
+    adminFirstName: '',
+    adminLastName: ''
   });
 
   const { data: tenants, isLoading } = useQuery({
@@ -39,16 +42,24 @@ export default function SuperAdminTenants() {
     mutationFn: async (data: any) => {
       return await apiRequest("/api/superadmin/tenants", "POST", data);
     },
-    onSuccess: () => {
+    onSuccess: (response: any) => {
       queryClient.invalidateQueries({ queryKey: ["/api/superadmin/tenants"] });
       toast({
         title: "Success",
-        description: "Tenant created successfully",
+        description: response?.message || "Tenant created successfully",
       });
       setIsCreateDialogOpen(false);
-      setNewTenantData({ name: '', domain: '', website: '', subscriptionPlan: 'starter' });
+      setNewTenantData({ 
+        name: '', 
+        domain: '', 
+        website: '', 
+        subscriptionPlan: 'starter',
+        adminEmail: '',
+        adminFirstName: '',
+        adminLastName: ''
+      });
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("Tenant creation error:", error);
       toast({
         title: "Error",
@@ -103,6 +114,24 @@ export default function SuperAdminTenants() {
       return;
     }
 
+    if (!newTenantData.adminEmail.trim()) {
+      toast({
+        title: "Error",
+        description: "Admin email is required",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!newTenantData.adminFirstName.trim() || !newTenantData.adminLastName.trim()) {
+      toast({
+        title: "Error",
+        description: "Admin first and last name are required",
+        variant: "destructive",
+      });
+      return;
+    }
+
     createTenantMutation.mutate(newTenantData);
   };
 
@@ -138,7 +167,7 @@ export default function SuperAdminTenants() {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold text-white">
-              All Tenants ({tenants?.length || 0})
+              All Tenants ({Array.isArray(tenants) ? tenants.length : 0})
             </h2>
             <p className="text-sm text-gray-400">
               Manage tenant accounts, subscriptions, and access
@@ -206,6 +235,47 @@ export default function SuperAdminTenants() {
                     </SelectContent>
                   </Select>
                 </div>
+                
+                {/* Admin User Section */}
+                <div className="border-t border-border pt-4">
+                  <h4 className="text-sm font-medium text-white mb-3">Tenant Admin User</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <Label htmlFor="adminEmail" className="text-white">Admin Email</Label>
+                      <Input
+                        id="adminEmail"
+                        type="email"
+                        value={newTenantData.adminEmail}
+                        onChange={(e) => setNewTenantData(prev => ({ ...prev, adminEmail: e.target.value }))}
+                        placeholder="admin@example.com"
+                        className="mt-1"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label htmlFor="adminFirstName" className="text-white">First Name</Label>
+                        <Input
+                          id="adminFirstName"
+                          value={newTenantData.adminFirstName}
+                          onChange={(e) => setNewTenantData(prev => ({ ...prev, adminFirstName: e.target.value }))}
+                          placeholder="John"
+                          className="mt-1"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="adminLastName" className="text-white">Last Name</Label>
+                        <Input
+                          id="adminLastName"
+                          value={newTenantData.adminLastName}
+                          onChange={(e) => setNewTenantData(prev => ({ ...prev, adminLastName: e.target.value }))}
+                          placeholder="Doe"
+                          className="mt-1"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
                 <div className="flex items-center space-x-2 pt-4">
                   <Button 
                     onClick={handleCreateTenant}
@@ -227,7 +297,7 @@ export default function SuperAdminTenants() {
         </div>
 
         {/* Tenants Grid */}
-        {tenants?.length === 0 ? (
+        {(!Array.isArray(tenants) || tenants.length === 0) ? (
           <Card className="bg-surface border-border">
             <CardContent className="text-center py-12">
               <Building2 className="w-16 h-16 text-gray-600 mx-auto mb-4" />
@@ -245,7 +315,7 @@ export default function SuperAdminTenants() {
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tenants?.map((tenant: any) => (
+            {Array.isArray(tenants) && tenants.map((tenant: any) => (
               <Card key={tenant.id} className="bg-surface border-border hover:border-primary/50 transition-colors">
                 <CardHeader>
                   <div className="flex items-center justify-between">

@@ -46,7 +46,7 @@ const getTenantContext = async (req: AuthenticatedRequest, res: Response, next: 
 
     if (user.role === 'superadmin') {
       // Superadmins can access any tenant via query parameter
-      req.tenantId = req.query.tenantId as string;
+      req.tenantId = (req.query.tenantId as string) || undefined;
     } else {
       // Business users can only access their own tenant
       req.tenantId = user.tenantId;
@@ -153,15 +153,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Create new tenant (superadmin only)
+  // Create new tenant with admin user (superadmin only)
   app.post("/api/superadmin/tenants", isAuthenticated, isSuperAdmin, async (req, res) => {
     try {
       console.log("Creating tenant with data:", req.body);
-      const tenantData = insertTenantSchema.parse(req.body);
-      console.log("Parsed tenant data:", tenantData);
-      const tenant = await storage.createTenant(tenantData);
+      const { adminEmail, adminFirstName, adminLastName, ...tenantData } = req.body;
+      
+      // Validate tenant data
+      const parsedTenantData = insertTenantSchema.parse(tenantData);
+      console.log("Parsed tenant data:", parsedTenantData);
+      
+      // Create tenant and admin user in a transaction-like approach
+      const tenant = await storage.createTenant(parsedTenantData);
       console.log("Created tenant:", tenant);
-      res.json(tenant);
+      
+      if (adminEmail && adminFirstName && adminLastName) {
+        // Create admin user for the tenant
+        const adminUser = await storage.createTenantAdmin({
+          id: adminEmail, // Use email as ID for external auth systems
+          email: adminEmail,
+          firstName: adminFirstName,
+          lastName: adminLastName,
+          role: 'business_admin' as const,
+          tenantId: tenant.id
+        });
+        console.log("Created admin user:", adminUser);
+        
+        res.json({ 
+          tenant, 
+          adminUser,
+          message: "Tenant and admin user created successfully. Admin can now log in with their credentials." 
+        });
+      } else {
+        res.json({ 
+          tenant,
+          message: "Tenant created successfully. No admin user was created." 
+        });
+      }
     } catch (error) {
       console.error("Error creating tenant:", error);
       if (error instanceof Error) {
