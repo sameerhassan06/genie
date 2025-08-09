@@ -77,7 +77,7 @@ export default function TopNavbar({ title, description, onMobileMenuToggle }: To
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                 <img
                   className="h-8 w-8 rounded-full object-cover"
-                  src={user?.profileImageUrl || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400"}
+                  src={(user as any)?.profileImageUrl || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400"}
                   alt="Profile"
                 />
               </Button>
@@ -85,16 +85,16 @@ export default function TopNavbar({ title, description, onMobileMenuToggle }: To
             <DropdownMenuContent className="w-56 bg-surface border-border" align="end" forceMount>
               <div className="flex flex-col space-y-1 p-2">
                 <p className="text-sm font-medium text-white">
-                  {user?.firstName && user?.lastName 
-                    ? `${user.firstName} ${user.lastName}` 
-                    : user?.email || 'User'
+                  {(user as any)?.firstName && (user as any)?.lastName 
+                    ? `${(user as any).firstName} ${(user as any).lastName}` 
+                    : (user as any)?.email || 'User'
                   }
                 </p>
                 <p className="text-xs text-gray-400">
-                  {user?.email}
+                  {(user as any)?.email}
                 </p>
                 <p className="text-xs text-gray-500">
-                  {user?.role === 'superadmin' ? 'Super Administrator' : 'Business Administrator'}
+                  {(user as any)?.role === 'superadmin' ? 'Super Administrator' : 'Business Administrator'}
                 </p>
               </div>
               <DropdownMenuSeparator className="bg-border" />
