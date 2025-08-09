@@ -55,7 +55,7 @@ Preferred communication style: Simple, everyday language.
 # External Dependencies
 
 ## Database & Infrastructure
-- **PostgreSQL Database**: Primary database with Drizzle ORM
+- **Supabase PostgreSQL**: Primary database hosted on Supabase with Drizzle ORM
 - **Drizzle Kit**: Database migrations and schema management
 - **Memory Session Store**: In-memory session storage for authentication
 
@@ -76,6 +76,7 @@ Preferred communication style: Simple, everyday language.
 # Recent Changes
 
 ## August 2025
+- **Migrated to Supabase**: Successfully migrated all data (7 users, 5 tenants, 2 chatbots, 1 lead) from local PostgreSQL to Supabase
 - **Fixed Authentication System**: Resolved infinite 401 loops and improved session handling
 - **Automatic Tenant Creation**: Users now get default tenants created after registration
 - **Added Service Modules**: Created chatbotService and scrapingService for AI functionality
