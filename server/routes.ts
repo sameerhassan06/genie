@@ -71,7 +71,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Promote user to superadmin (for initial setup)
   app.post("/api/setup/promote-superadmin", isAuthenticated, async (req: AuthenticatedRequest, res) => {
     try {
-      const userId = req.user?.claims?.sub;
+      const userId = req.user?.id;
       if (!userId) {
         return res.status(401).json({ message: "Unauthorized" });
       }
