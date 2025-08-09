@@ -63,16 +63,14 @@ export default function Sidebar() {
             {navItems.map((item) => {
               const isActive = location === item.href;
               return (
-                <Link key={item.href} href={item.href}>
-                  <a className={cn(
-                    "group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors",
-                    isActive
-                      ? "bg-primary/10 text-primary border-r-2 border-primary"
-                      : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                  )}>
-                    <item.icon className="mr-3 w-5 h-5" />
-                    {item.label}
-                  </a>
+                <Link key={item.href} href={item.href} className={cn(
+                  "group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                  isActive
+                    ? "bg-primary/10 text-primary border-r-2 border-primary"
+                    : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                )}>
+                  <item.icon className="mr-3 w-5 h-5" />
+                  {item.label}
                 </Link>
               );
             })}

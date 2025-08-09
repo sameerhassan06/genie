@@ -12,6 +12,7 @@ import Setup from "@/pages/setup";
 import SuperAdminDashboard from "@/pages/superadmin/dashboard";
 import SuperAdminTenants from "@/pages/superadmin/tenants";
 import SuperAdminBilling from "@/pages/superadmin/billing";
+import SuperAdminSettings from "@/pages/superadmin/settings";
 import BusinessDashboard from "@/pages/business/dashboard";
 import ChatbotDesigner from "@/pages/business/chatbot-designer";
 import Leads from "@/pages/business/leads";
@@ -42,6 +43,7 @@ function Router() {
           <Route path="/" component={SuperAdminDashboard} />
           <Route path="/tenants" component={SuperAdminTenants} />
           <Route path="/billing" component={SuperAdminBilling} />
+          <Route path="/settings" component={SuperAdminSettings} />
         </>
       ) : user?.tenantId ? (
         <>
