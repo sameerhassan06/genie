@@ -37,7 +37,7 @@ export default function SuperAdminTenants() {
 
   const createTenantMutation = useMutation({
     mutationFn: async (data: any) => {
-      return await apiRequest("POST", "/api/superadmin/tenants", data);
+      return await apiRequest("/api/superadmin/tenants", "POST", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/superadmin/tenants"] });
@@ -49,9 +49,10 @@ export default function SuperAdminTenants() {
       setNewTenantData({ name: '', domain: '', website: '', subscriptionPlan: 'starter' });
     },
     onError: (error) => {
+      console.error("Tenant creation error:", error);
       toast({
         title: "Error",
-        description: "Failed to create tenant",
+        description: error?.message || "Failed to create tenant",
         variant: "destructive",
       });
     },
@@ -59,7 +60,7 @@ export default function SuperAdminTenants() {
 
   const updateTenantMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: any }) => {
-      return await apiRequest("PATCH", `/api/superadmin/tenants/${id}`, data);
+      return await apiRequest(`/api/superadmin/tenants/${id}`, "PATCH", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/superadmin/tenants"] });

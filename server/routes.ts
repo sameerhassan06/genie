@@ -156,12 +156,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create new tenant (superadmin only)
   app.post("/api/superadmin/tenants", isAuthenticated, isSuperAdmin, async (req, res) => {
     try {
+      console.log("Creating tenant with data:", req.body);
       const tenantData = insertTenantSchema.parse(req.body);
+      console.log("Parsed tenant data:", tenantData);
       const tenant = await storage.createTenant(tenantData);
+      console.log("Created tenant:", tenant);
       res.json(tenant);
     } catch (error) {
       console.error("Error creating tenant:", error);
-      res.status(500).json({ message: "Failed to create tenant" });
+      if (error instanceof Error) {
+        res.status(500).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: "Failed to create tenant" });
+      }
     }
   });
 
