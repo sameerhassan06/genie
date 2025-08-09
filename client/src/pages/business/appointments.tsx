@@ -45,6 +45,9 @@ export default function BusinessAppointments() {
     retry: false,
   });
 
+  const appointmentsArray = Array.isArray(appointments) ? appointments : [];
+  const servicesArray = Array.isArray(services) ? services : [];
+
   const createAppointmentMutation = useMutation({
     mutationFn: async (data: any) => {
       return await apiRequest("POST", "/api/appointments", data);

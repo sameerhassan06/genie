@@ -119,14 +119,14 @@ export default function BusinessLeads() {
     }
   };
 
-  const filteredLeads = leads?.filter((lead: any) => {
+  const filteredLeads = (Array.isArray(leads) ? leads : []).filter((lead: any) => {
     const matchesSearch = lead.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          lead.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          lead.phone?.includes(searchTerm);
     const matchesStatus = statusFilter === 'all' || lead.status === statusFilter;
     const matchesSource = sourceFilter === 'all' || lead.source === sourceFilter;
     return matchesSearch && matchesStatus && matchesSource;
-  }) || [];
+  });
 
   const handleCreateLead = () => {
     if (!newLeadData.name.trim() && !newLeadData.email.trim()) {
@@ -148,12 +148,13 @@ export default function BusinessLeads() {
     });
   };
 
+  const leadsArray = Array.isArray(leads) ? leads : [];
   const leadStats = {
-    total: leads?.length || 0,
-    new: leads?.filter((l: any) => l.status === 'new').length || 0,
-    qualified: leads?.filter((l: any) => l.status === 'qualified').length || 0,
-    converted: leads?.filter((l: any) => l.status === 'converted').length || 0,
-    avgScore: leads?.reduce((sum: number, lead: any) => sum + (lead.score || 0), 0) / (leads?.length || 1) || 0
+    total: leadsArray.length,
+    new: leadsArray.filter((l: any) => l.status === 'new').length,
+    qualified: leadsArray.filter((l: any) => l.status === 'qualified').length,
+    converted: leadsArray.filter((l: any) => l.status === 'converted').length,
+    avgScore: leadsArray.length > 0 ? leadsArray.reduce((sum: number, lead: any) => sum + (lead.score || 0), 0) / leadsArray.length : 0
   };
 
   return (
@@ -305,9 +306,9 @@ export default function BusinessLeads() {
                       <Button 
                         onClick={handleCreateLead}
                         disabled={createLeadMutation.isPending}
-                        className="bg-primary hover:bg-primary/90"
+                        className="w-full bg-primary hover:bg-primary/90"
                       >
-                        Create Lead
+                        {createLeadMutation.isPending ? "Creating..." : "Create Lead"}
                       </Button>
                       <Button 
                         variant="outline" 

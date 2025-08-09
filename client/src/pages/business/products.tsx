@@ -41,6 +41,8 @@ export default function BusinessProducts() {
     retry: false,
   });
 
+  const servicesArray = Array.isArray(services) ? services : [];
+
   const createServiceMutation = useMutation({
     mutationFn: async (data: any) => {
       return await apiRequest("POST", "/api/services", data);

@@ -25,6 +25,8 @@ export default function ChatbotDesigner() {
     retry: false,
   });
 
+  const chatbotsArray = Array.isArray(chatbots) ? chatbots : [];
+
   const createChatbotMutation = useMutation({
     mutationFn: async (data: any) => {
       return await apiRequest("POST", "/api/chatbots", data);
@@ -91,7 +93,7 @@ export default function ChatbotDesigner() {
     });
   };
 
-  const currentChatbot = chatbots?.find((bot: any) => bot.id === selectedChatbot);
+  const currentChatbot = chatbotsArray.find((bot: any) => bot.id === selectedChatbot);
 
   const handleUpdateChatbot = (field: string, value: any) => {
     if (!selectedChatbot) return;
@@ -151,7 +153,7 @@ export default function ChatbotDesigner() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {chatbots?.map((chatbot: any) => (
+              {chatbotsArray.map((chatbot: any) => (
                 <Card
                   key={chatbot.id}
                   className={`cursor-pointer border-2 transition-colors ${
