@@ -146,6 +146,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (adminEmail && adminFirstName && adminLastName && req.body.adminPassword) {
         // Create admin user for the tenant
         const adminUser = await storage.createTenantAdmin({
+          username: `admin_${tenant.id.slice(0, 8)}`,
           email: adminEmail,
           firstName: adminFirstName,
           lastName: adminLastName,
@@ -541,7 +542,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         switch (message.type) {
           case 'subscribe_tenant':
             // Join tenant-specific room for real-time updates
-            ws.tenantId = message.tenantId;
+            (ws as any).tenantId = message.tenantId;
             ws.send(JSON.stringify({ type: 'subscribed', tenantId: message.tenantId }));
             break;
             

@@ -28,6 +28,7 @@ Preferred communication style: Simple, everyday language.
 - **Multi-tenant Security**: Tenant isolation at the database and API level
 - **Simple Auth Interface**: Clean signup/signin buttons at /auth page with form validation
 - **Username-based Login**: Users register and login with username instead of email
+- **Automatic Tenant Creation**: Default tenant is created automatically after user registration
 
 ## Database Design
 - **Multi-tenant Architecture**: Tenant-scoped data isolation with foreign key relationships
@@ -54,20 +55,28 @@ Preferred communication style: Simple, everyday language.
 # External Dependencies
 
 ## Database & Infrastructure
-- **Neon Database**: Serverless PostgreSQL hosting
+- **PostgreSQL Database**: Primary database with Drizzle ORM
 - **Drizzle Kit**: Database migrations and schema management
-- **Connect PG Simple**: PostgreSQL session store adapter
+- **Memory Session Store**: In-memory session storage for authentication
 
 ## AI & ML Services
 - **OpenAI API**: GPT-4o model for natural language processing and response generation
 - **Puppeteer**: Headless Chrome automation for website content scraping
 
 ## Authentication
-- **Replit OIDC**: OpenID Connect provider for user authentication
-- **Passport.js**: Authentication middleware with OpenID Connect strategy
+- **Passport.js**: Authentication middleware with local strategy
+- **Bcrypt**: Password hashing for secure authentication
 
 ## Development Tools
 - **Vite**: Frontend build tool with React plugin
 - **TypeScript**: Type safety across frontend and backend
 - **ESBuild**: Backend bundling for production builds
 - **Replit Dev Tools**: Runtime error overlay and cartographer for development
+
+# Recent Changes
+
+## August 2025
+- **Fixed Authentication System**: Resolved infinite 401 loops and improved session handling
+- **Automatic Tenant Creation**: Users now get default tenants created after registration
+- **Added Service Modules**: Created chatbotService and scrapingService for AI functionality
+- **Enhanced Business Dashboard**: Improved form functionality and chatbot creation flow

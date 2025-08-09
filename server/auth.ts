@@ -109,17 +109,51 @@ export function setupAuth(app: Express) {
       });
 
       // Log them in
-      req.login(user, (err) => {
+      req.login(user, async (err) => {
         if (err) return next(err);
-        res.status(201).json({
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          role: user.role,
-          tenantId: user.tenantId,
-        });
+        
+        // Automatically create a default tenant for new users
+        try {
+          const tenant = await storage.createTenant({
+            name: `${user.firstName || user.username}'s Business`,
+            domain: null,
+            website: null,
+          });
+          
+          // Update user to business_admin with tenant
+          await storage.upsertUser({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            password: user.password,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            role: 'business_admin',
+            tenantId: tenant.id,
+          });
+          
+          res.status(201).json({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            role: 'business_admin',
+            tenantId: tenant.id,
+          });
+        } catch (tenantError) {
+          console.error("Error creating automatic tenant:", tenantError);
+          // Still return success for user creation, tenant can be created later
+          res.status(201).json({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            role: user.role,
+            tenantId: user.tenantId,
+          });
+        }
       });
     } catch (error) {
       console.error("Registration error:", error);
