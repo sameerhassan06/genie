@@ -23,10 +23,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Authentication & Authorization
 - **Provider**: Traditional username/password authentication with bcrypt hashing
-- **Session Storage**: Database-backed sessions with secure HTTP-only cookies
+- **Session Storage**: Memory-based sessions with secure HTTP-only cookies (eliminates database conflicts)
 - **Role-based Access**: Three-tier system (superadmin, business_admin, business_member)
 - **Multi-tenant Security**: Tenant isolation at the database and API level
-- **Password Management**: Secure password creation and validation for tenant admins
+- **Simple Auth Interface**: Clean signup/signin buttons at /auth page with form validation
+- **Username-based Login**: Users register and login with username instead of email
 
 ## Database Design
 - **Multi-tenant Architecture**: Tenant-scoped data isolation with foreign key relationships
