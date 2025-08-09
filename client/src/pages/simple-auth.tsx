@@ -23,7 +23,7 @@ export default function SimpleAuth() {
   const authMutation = useMutation({
     mutationFn: async (credentials: any) => {
       const endpoint = isLogin ? "/api/login" : "/api/register";
-      const res = await apiRequest(endpoint, "POST", credentials);
+      const res = await apiRequest("POST", endpoint, credentials);
       return await res.json();
     },
     onSuccess: () => {
