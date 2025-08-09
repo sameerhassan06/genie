@@ -1,0 +1,11 @@
+node_modules
+.env
+.env.local
+dist
+*.log
+.replit
+replit.nix
+.upm
+attached_assets
+migration_backup.sql
+cookies.txt
