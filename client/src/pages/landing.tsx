@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bot, MessageSquare, Users, Calendar, BarChart3, Zap, Shield, Globe } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Landing() {
+  const { isAuthenticated } = useAuth();
+  
   const handleLogin = () => {
     window.location.href = "/auth";
   };
@@ -19,12 +22,23 @@ export default function Landing() {
             <span className="text-xl font-bold text-white">ChatBot Pro</span>
           </div>
           <div className="flex gap-2">
-            <Button onClick={() => window.location.href = '/setup'} variant="outline" className="text-white border-white hover:bg-white hover:text-gray-900">
-              Setup
-            </Button>
-            <Button onClick={handleLogin} variant="outline" className="text-white border-white hover:bg-white hover:text-gray-900">
-              Sign In
-            </Button>
+            {isAuthenticated ? (
+              <>
+                <Button onClick={() => window.location.href = '/setup'} className="bg-primary hover:bg-primary/90 text-white">
+                  Create Tenant
+                </Button>
+                <Button onClick={() => {
+                  fetch('/api/logout', { method: 'POST', credentials: 'include' })
+                    .then(() => window.location.reload());
+                }} variant="outline" className="text-white border-white hover:bg-white hover:text-gray-900">
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <Button onClick={handleLogin} variant="outline" className="text-white border-white hover:bg-white hover:text-gray-900">
+                Sign In
+              </Button>
+            )}
           </div>
         </nav>
       </header>
@@ -33,20 +47,30 @@ export default function Landing() {
       <section className="container mx-auto px-6 py-20 text-center">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-5xl font-bold text-white mb-6 leading-tight">
-            Transform Your Website with 
-            <span className="text-primary"> AI-Powered Chatbots</span>
+            {isAuthenticated ? 'Welcome! Create Your Business Tenant' : 'Transform Your Website with'} 
+            <span className="text-primary"> {isAuthenticated ? '' : 'AI-Powered Chatbots'}</span>
           </h1>
           <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-            Multi-tenant SaaS platform that helps businesses capture leads, schedule appointments, 
-            and provide instant customer support through intelligent chatbots.
+            {isAuthenticated 
+              ? 'Set up your business tenant to start creating AI chatbots for your website. Capture leads, schedule appointments, and provide instant customer support.'
+              : 'Multi-tenant SaaS platform that helps businesses capture leads, schedule appointments, and provide instant customer support through intelligent chatbots.'
+            }
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" onClick={handleLogin} className="bg-primary hover:bg-primary/90 text-white px-8 py-3">
-              Start Free Trial
-            </Button>
-            <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-gray-900">
-              View Demo
-            </Button>
+            {isAuthenticated ? (
+              <Button size="lg" onClick={() => window.location.href = '/setup'} className="bg-primary hover:bg-primary/90 text-white px-8 py-3">
+                Create Your Tenant
+              </Button>
+            ) : (
+              <>
+                <Button size="lg" onClick={handleLogin} className="bg-primary hover:bg-primary/90 text-white px-8 py-3">
+                  Start Free Trial
+                </Button>
+                <Button size="lg" variant="outline" className="text-white border-white hover:bg-white hover:text-gray-900">
+                  View Demo
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </section>

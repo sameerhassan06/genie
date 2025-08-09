@@ -200,6 +200,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // === TENANT CREATION FOR BUSINESS USERS ===
+  
+  // Create tenant for authenticated user (business members can create their own tenant)
+  app.post("/api/tenants", isAuthenticated, async (req: AuthenticatedRequest, res) => {
+    try {
+      const user = req.user;
+      if (!user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
+      // Check if user already has a tenant
+      if (user.tenantId) {
+        return res.status(400).json({ message: "User already belongs to a tenant" });
+      }
+      
+      const tenantData = insertTenantSchema.parse(req.body);
+      
+      // Create the tenant
+      const tenant = await storage.createTenant(tenantData);
+      
+      // Promote user to business_admin and assign to tenant
+      await storage.upsertUser({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        password: user.password,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: 'business_admin',
+        tenantId: tenant.id,
+      });
+      
+      res.json(tenant);
+    } catch (error) {
+      console.error("Error creating tenant:", error);
+      res.status(500).json({ message: "Failed to create tenant" });
+    }
+  });
+
   // === TENANT-SCOPED ROUTES ===
   
   // Dashboard stats

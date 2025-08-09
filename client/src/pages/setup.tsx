@@ -3,13 +3,114 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, Shield, Users } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Loader2, Shield, Users, Building } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
 
 interface SetupStatus {
   hasSuperadmin: boolean;
   totalUsers: number;
+}
+
+function TenantSetup({ user }: { user: any }) {
+  const [tenantData, setTenantData] = useState({
+    name: "",
+    domain: "",
+    website: ""
+  });
+
+  const createTenantMutation = useMutation({
+    mutationFn: async (data: any) => {
+      return await apiRequest("/api/tenants", "POST", data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      window.location.href = "/";
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    createTenantMutation.mutate(tenantData);
+  };
+
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <Building className="h-16 w-16 mx-auto mb-4 text-primary" />
+          <CardTitle className="text-2xl">Create Your Business Tenant</CardTitle>
+          <CardDescription>
+            Set up your business profile to start creating AI chatbots
+          </CardDescription>
+        </CardHeader>
+        
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Business Name</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="Your Business Name"
+                value={tenantData.name}
+                onChange={(e) => setTenantData(prev => ({ ...prev, name: e.target.value }))}
+                required
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="domain">Domain (Optional)</Label>
+              <Input
+                id="domain"
+                type="text"
+                placeholder="yourbusiness.com"
+                value={tenantData.domain}
+                onChange={(e) => setTenantData(prev => ({ ...prev, domain: e.target.value }))}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="website">Website (Optional)</Label>
+              <Input
+                id="website"
+                type="url"
+                placeholder="https://yourbusiness.com"
+                value={tenantData.website}
+                onChange={(e) => setTenantData(prev => ({ ...prev, website: e.target.value }))}
+              />
+            </div>
+            
+            <Button type="submit" className="w-full" disabled={createTenantMutation.isPending}>
+              {createTenantMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating Tenant...
+                </>
+              ) : (
+                'Create Tenant'
+              )}
+            </Button>
+          </form>
+          
+          <div className="mt-4 pt-4 border-t text-center">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                fetch('/api/logout', { method: 'POST', credentials: 'include' })
+                  .then(() => window.location.href = '/');
+              }}
+              className="w-full"
+            >
+              Sign Out
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
 }
 
 export default function Setup() {
@@ -45,29 +146,9 @@ export default function Setup() {
     );
   }
 
-  // If setup is complete and user is not superadmin, redirect
-  if (setupStatus?.hasSuperadmin && (user as any)?.role !== 'superadmin') {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <Shield className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <CardTitle>Access Restricted</CardTitle>
-            <CardDescription>
-              The platform has already been set up. Please contact your administrator for access.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button 
-              onClick={() => window.location.href = '/api/logout'} 
-              className="w-full"
-            >
-              Sign Out
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
+  // If user is authenticated but not superadmin, show tenant creation
+  if (isAuthenticated && setupStatus?.hasSuperadmin && (user as any)?.role !== 'superadmin') {
+    return <TenantSetup user={user} />;
   }
 
   return (

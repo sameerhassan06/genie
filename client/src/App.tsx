@@ -61,11 +61,11 @@ function Router() {
           <Route path="/settings" component={Settings} />
         </>
       ) : (
-        // User is authenticated but has no tenant and is not superadmin - needs setup
-        <Route path="/" component={() => { 
-          window.location.href = '/setup'; 
-          return null; 
-        }} />
+        // User is authenticated but has no tenant - needs tenant creation/join
+        <>
+          <Route path="/" component={Landing} />
+          <Route path="/setup" component={Setup} />
+        </>
       )}
       <Route component={NotFound} />
     </Switch>
