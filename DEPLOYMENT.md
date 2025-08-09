@@ -15,7 +15,7 @@ This guide will help you deploy your multi-tenant SaaS platform to Vercel.
 git init
 git add .
 git commit -m "Initial commit - Multi-tenant SaaS platform"
-git remote add origin https://github.com/yourusername/your-repo-name.git
+git remote add origin https://github.com/sameerhassan06/chatbots.git
 git push -u origin main
 ```
 

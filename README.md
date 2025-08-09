@@ -27,8 +27,8 @@ A comprehensive multi-tenant SaaS platform for creating and managing AI-powered 
 
 1. **Clone & Install**:
 ```bash
-git clone <your-repo>
-cd chatbot-saas-platform
+git clone https://github.com/sameerhassan06/chatbots.git
+cd chatbots
 npm install
 ```
 
@@ -67,7 +67,7 @@ Visit `http://localhost:5000` and login with:
 git init
 git add .
 git commit -m "Deploy to Vercel"
-git remote add origin https://github.com/yourusername/your-repo.git
+git remote add origin https://github.com/sameerhassan06/chatbots.git
 git push -u origin main
 ```
 
