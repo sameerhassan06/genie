@@ -46,7 +46,7 @@ export default function Setup() {
   }
 
   // If setup is complete and user is not superadmin, redirect
-  if (setupStatus?.hasSuperadmin && user?.role !== 'superadmin') {
+  if (setupStatus?.hasSuperadmin && (user as any)?.role !== 'superadmin') {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Card className="w-full max-w-md">
@@ -156,7 +156,7 @@ export default function Setup() {
             </div>
           )}
 
-          {setupStatus?.hasSuperadmin && user?.role === 'superadmin' && (
+          {setupStatus?.hasSuperadmin && (user as any)?.role === 'superadmin' && (
             <div className="text-center space-y-4">
               <Alert className="border-blue-200 bg-blue-50 text-blue-800">
                 <Shield className="h-4 w-4" />
