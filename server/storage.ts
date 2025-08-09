@@ -37,6 +37,8 @@ export interface IStorage {
   // User operations (mandatory for Replit Auth)
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
+  promoteToSuperadmin(userId: string): Promise<User>;
+  getAllUsers(): Promise<User[]>;
   
   // Tenant operations
   getTenant(id: string): Promise<Tenant | undefined>;
@@ -134,6 +136,19 @@ export class DatabaseStorage implements IStorage {
       })
       .returning();
     return user;
+  }
+
+  async promoteToSuperadmin(userId: string): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({ role: 'superadmin', tenantId: null, updatedAt: new Date() })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return await db.select().from(users).orderBy(desc(users.createdAt));
   }
 
   // Tenant operations

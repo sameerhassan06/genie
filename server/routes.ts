@@ -98,7 +98,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // === SETUP & USER MANAGEMENT ===
+  
+  // Promote user to superadmin (for initial setup)
+  app.post("/api/setup/promote-superadmin", isAuthenticated, async (req: AuthenticatedRequest, res) => {
+    try {
+      const userId = req.user?.claims?.sub;
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      // Check if any superadmins exist (for security)
+      const allUsers = await storage.getAllUsers();
+      const existingSuperadmins = allUsers.filter(user => user.role === 'superadmin');
+      
+      if (existingSuperadmins.length === 0) {
+        // First user becomes superadmin
+        const user = await storage.promoteToSuperadmin(userId);
+        res.json({ message: "Successfully promoted to superadmin", user });
+      } else {
+        res.status(403).json({ message: "Superadmin already exists" });
+      }
+    } catch (error) {
+      console.error("Error promoting to superadmin:", error);
+      res.status(500).json({ message: "Failed to promote user" });
+    }
+  });
+
+  // Check setup status
+  app.get("/api/setup/status", async (req, res) => {
+    try {
+      const allUsers = await storage.getAllUsers();
+      const hasSuperadmin = allUsers.some(user => user.role === 'superadmin');
+      res.json({ hasSuperadmin, totalUsers: allUsers.length });
+    } catch (error) {
+      console.error("Error checking setup status:", error);
+      res.status(500).json({ message: "Failed to check setup status" });
+    }
+  });
+
   // === SUPERADMIN ROUTES ===
+  
+  // Get all users (superadmin only)
+  app.get("/api/superadmin/users", isAuthenticated, isSuperAdmin, async (req, res) => {
+    try {
+      const users = await storage.getAllUsers();
+      res.json(users);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
   
   // Get all tenants (superadmin only)
   app.get("/api/superadmin/tenants", isAuthenticated, isSuperAdmin, async (req, res) => {

@@ -8,6 +8,7 @@ import NotFound from "@/pages/not-found";
 
 // Import pages
 import Landing from "@/pages/landing";
+import Setup from "@/pages/setup";
 import SuperAdminDashboard from "@/pages/superadmin/dashboard";
 import SuperAdminTenants from "@/pages/superadmin/tenants";
 import SuperAdminBilling from "@/pages/superadmin/billing";
@@ -33,6 +34,7 @@ function Router() {
 
   return (
     <Switch>
+      <Route path="/setup" component={Setup} />
       {!isAuthenticated ? (
         <Route path="/" component={Landing} />
       ) : user?.role === 'superadmin' ? (
@@ -41,7 +43,7 @@ function Router() {
           <Route path="/tenants" component={SuperAdminTenants} />
           <Route path="/billing" component={SuperAdminBilling} />
         </>
-      ) : (
+      ) : user?.tenantId ? (
         <>
           <Route path="/" component={BusinessDashboard} />
           <Route path="/chatbot-designer" component={ChatbotDesigner} />
@@ -52,6 +54,12 @@ function Router() {
           <Route path="/ai-training" component={AITraining} />
           <Route path="/settings" component={Settings} />
         </>
+      ) : (
+        // User is authenticated but has no tenant and is not superadmin - needs setup
+        <Route path="/" component={() => { 
+          window.location.href = '/setup'; 
+          return null; 
+        }} />
       )}
       <Route component={NotFound} />
     </Switch>
