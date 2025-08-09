@@ -34,8 +34,10 @@ import { db } from "./db";
 import { eq, and, desc, asc, count, avg, sum } from "drizzle-orm";
 
 export interface IStorage {
-  // User operations (mandatory for Replit Auth)
+  // User operations
   getUser(id: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  createUser(user: UpsertUser): Promise<User>;
   upsertUser(user: UpsertUser): Promise<User>;
   promoteToSuperadmin(userId: string): Promise<User>;
   createTenantAdmin(user: UpsertUser): Promise<User>;
@@ -124,6 +126,19 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user;
+  }
+
+  async createUser(userData: UpsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(userData)
+      .returning();
+    return user;
+  }
+
   async upsertUser(userData: UpsertUser): Promise<User> {
     const [user] = await db
       .insert(users)
@@ -148,10 +163,22 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async createTenantAdmin(userData: UpsertUser): Promise<User> {
+  async createTenantAdmin(userData: UpsertUser & { password: string }): Promise<User> {
+    const { scrypt, randomBytes } = await import("crypto");
+    const { promisify } = await import("util");
+    const scryptAsync = promisify(scrypt);
+    
+    // Hash password
+    const salt = randomBytes(16).toString("hex");
+    const buf = (await scryptAsync(userData.password, salt, 64)) as Buffer;
+    const hashedPassword = `${buf.toString("hex")}.${salt}`;
+    
     const [user] = await db
       .insert(users)
-      .values(userData)
+      .values({
+        ...userData,
+        password: hashedPassword,
+      })
       .returning();
     return user;
   }

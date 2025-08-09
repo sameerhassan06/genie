@@ -2,7 +2,7 @@ import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupAuth, isAuthenticated } from "./auth";
 import { aiService } from "./services/aiService";
 import { chatbotService } from "./services/chatbotService";
 import { scrapingService } from "./services/scrapingService";
@@ -15,12 +15,7 @@ interface AuthenticatedRequest extends Request {
 // Middleware to check if user is superadmin
 const isSuperAdmin = async (req: AuthenticatedRequest, res: Response, next: Function) => {
   try {
-    const userId = req.user?.claims?.sub;
-    if (!userId) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    const user = await storage.getUser(userId);
+    const user = req.user;
     if (!user || user.role !== 'superadmin') {
       return res.status(403).json({ message: "Forbidden: Superadmin access required" });
     }
@@ -34,14 +29,9 @@ const isSuperAdmin = async (req: AuthenticatedRequest, res: Response, next: Func
 // Middleware to get tenant context for business admins
 const getTenantContext = async (req: AuthenticatedRequest, res: Response, next: Function) => {
   try {
-    const userId = req.user?.claims?.sub;
-    if (!userId) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    const user = await storage.getUser(userId);
+    const user = req.user;
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
     if (user.role === 'superadmin') {
@@ -71,24 +61,10 @@ declare global {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware
-  await setupAuth(app);
+  // Auth middleware  
+  setupAuth(app);
 
-  // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: AuthenticatedRequest, res) => {
-    try {
-      const userId = req.user?.claims?.sub;
-      if (!userId) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-
-      const user = await storage.getUser(userId);
-      res.json(user);
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
-    }
-  });
+  // Auth routes are handled in setupAuth function
 
   // === SETUP & USER MANAGEMENT ===
   
@@ -167,13 +143,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const tenant = await storage.createTenant(parsedTenantData);
       console.log("Created tenant:", tenant);
       
-      if (adminEmail && adminFirstName && adminLastName) {
+      if (adminEmail && adminFirstName && adminLastName && req.body.adminPassword) {
         // Create admin user for the tenant
         const adminUser = await storage.createTenantAdmin({
-          id: adminEmail, // Use email as ID for external auth systems
           email: adminEmail,
           firstName: adminFirstName,
           lastName: adminLastName,
+          password: req.body.adminPassword,
           role: 'business_admin' as const,
           tenantId: tenant.id
         });

@@ -8,6 +8,7 @@ import NotFound from "@/pages/not-found";
 
 // Import pages
 import Landing from "@/pages/landing";
+import AuthPage from "@/pages/auth";
 import Setup from "@/pages/setup";
 import SuperAdminDashboard from "@/pages/superadmin/dashboard";
 import SuperAdminTenants from "@/pages/superadmin/tenants";
@@ -37,7 +38,10 @@ function Router() {
     <Switch>
       <Route path="/setup" component={Setup} />
       {!isAuthenticated ? (
-        <Route path="/" component={Landing} />
+        <>
+          <Route path="/auth" component={AuthPage} />
+          <Route path="/" component={Landing} />
+        </>
       ) : user?.role === 'superadmin' ? (
         <>
           <Route path="/" component={SuperAdminDashboard} />

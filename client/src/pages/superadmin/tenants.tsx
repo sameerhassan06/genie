@@ -30,7 +30,9 @@ export default function SuperAdminTenants() {
     subscriptionPlan: 'starter',
     adminEmail: '',
     adminFirstName: '',
-    adminLastName: ''
+    adminLastName: '',
+    adminPassword: '',
+    adminConfirmPassword: ''
   });
 
   const { data: tenants, isLoading } = useQuery({
@@ -56,7 +58,9 @@ export default function SuperAdminTenants() {
         subscriptionPlan: 'starter',
         adminEmail: '',
         adminFirstName: '',
-        adminLastName: ''
+        adminLastName: '',
+        adminPassword: '',
+        adminConfirmPassword: ''
       });
     },
     onError: (error: any) => {
@@ -127,6 +131,33 @@ export default function SuperAdminTenants() {
       toast({
         title: "Error",
         description: "Admin first and last name are required",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!newTenantData.adminPassword.trim()) {
+      toast({
+        title: "Error",
+        description: "Admin password is required",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (newTenantData.adminPassword.length < 8) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 8 characters long",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (newTenantData.adminPassword !== newTenantData.adminConfirmPassword) {
+      toast({
+        title: "Error",
+        description: "Passwords do not match",
         variant: "destructive",
       });
       return;
@@ -269,6 +300,30 @@ export default function SuperAdminTenants() {
                           value={newTenantData.adminLastName}
                           onChange={(e) => setNewTenantData(prev => ({ ...prev, adminLastName: e.target.value }))}
                           placeholder="Doe"
+                          className="mt-1"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label htmlFor="adminPassword" className="text-white">Password</Label>
+                        <Input
+                          id="adminPassword"
+                          type="password"
+                          value={newTenantData.adminPassword}
+                          onChange={(e) => setNewTenantData(prev => ({ ...prev, adminPassword: e.target.value }))}
+                          placeholder="Min 8 characters"
+                          className="mt-1"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="adminConfirmPassword" className="text-white">Confirm Password</Label>
+                        <Input
+                          id="adminConfirmPassword"
+                          type="password"
+                          value={newTenantData.adminConfirmPassword}
+                          onChange={(e) => setNewTenantData(prev => ({ ...prev, adminConfirmPassword: e.target.value }))}
+                          placeholder="Confirm password"
                           className="mt-1"
                         />
                       </div>

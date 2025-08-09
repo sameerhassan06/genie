@@ -22,10 +22,11 @@ Preferred communication style: Simple, everyday language.
 - **Session Management**: PostgreSQL-backed session storage using connect-pg-simple
 
 ## Authentication & Authorization
-- **Provider**: Replit OpenID Connect integration using passport strategy
+- **Provider**: Traditional username/password authentication with bcrypt hashing
 - **Session Storage**: Database-backed sessions with secure HTTP-only cookies
 - **Role-based Access**: Three-tier system (superadmin, business_admin, business_member)
 - **Multi-tenant Security**: Tenant isolation at the database and API level
+- **Password Management**: Secure password creation and validation for tenant admins
 
 ## Database Design
 - **Multi-tenant Architecture**: Tenant-scoped data isolation with foreign key relationships
