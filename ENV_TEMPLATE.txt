@@ -1,0 +1,22 @@
+# Environment Variables for Coolify Deployment
+# Copy these to your Coolify application environment settings
+
+# Database Configuration
+DATABASE_URL=postgresql://postgres:[YOUR-PASSWORD]@db.[YOUR-PROJECT-REF].supabase.co:5432/postgres
+
+# Authentication (Generate with: openssl rand -base64 48)
+SESSION_SECRET=REPLACE-WITH-YOUR-SECURE-RANDOM-STRING-MINIMUM-32-CHARS
+
+# AI Integration
+OPENAI_API_KEY=sk-REPLACE-WITH-YOUR-OPENAI-API-KEY
+
+# Application Settings
+NODE_ENV=production
+PORT=5000
+
+# Optional: Additional Supabase Variables (if needed)
+PGHOST=db.[YOUR-PROJECT-REF].supabase.co
+PGPORT=5432
+PGUSER=postgres
+PGPASSWORD=[YOUR-PASSWORD]
+PGDATABASE=postgres
