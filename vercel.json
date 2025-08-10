@@ -2,11 +2,11 @@
   "version": 2,
   "builds": [
     {
-      "src": "package.json",
+      "src": "client/src/**/*",
       "use": "@vercel/static-build",
       "config": {
-        "buildCommand": "vite build && cp -r dist/public/* dist/",
-        "outputDirectory": "dist"
+        "buildCommand": "cd client && vite build",
+        "outputDirectory": "client/dist"
       }
     }
   ],
