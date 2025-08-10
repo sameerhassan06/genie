@@ -83,3 +83,6 @@ Preferred communication style: Simple, everyday language.
 - **Automatic Tenant Creation**: Users now get default tenants created after registration
 - **Added Service Modules**: Created chatbotService and scrapingService for AI functionality
 - **Enhanced Business Dashboard**: Improved form functionality and chatbot creation flow
+- **Coolify Deployment Setup**: Created Docker configuration and deployment files for self-hosted deployment
+- **Added Demo Mode**: Implemented static demo mode for frontend-only deployments with realistic sample data
+- **Health Check Endpoint**: Added `/api/health` endpoint for container health monitoring
