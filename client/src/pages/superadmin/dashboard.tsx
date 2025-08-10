@@ -15,9 +15,14 @@ export default function SuperAdminDashboard() {
   const { toast } = useToast();
   const { isAuthenticated, isLoading, user } = useAuth();
 
-  // Redirect if not superadmin
+  // Demo mode check
+  const isDemoMode = typeof window !== 'undefined' && 
+    import.meta.env.MODE === 'production' && 
+    window.location.hostname.includes('vercel');
+
+  // Redirect if not superadmin (unless in demo mode)
   useEffect(() => {
-    if (!isLoading && (!isAuthenticated || user?.role !== 'superadmin')) {
+    if (!isDemoMode && !isLoading && (!isAuthenticated || user?.role !== 'superadmin')) {
       toast({
         title: "Unauthorized",
         description: "You need superadmin access to view this page.",
@@ -28,19 +33,19 @@ export default function SuperAdminDashboard() {
       }, 500);
       return;
     }
-  }, [isAuthenticated, isLoading, user, toast]);
+  }, [isAuthenticated, isLoading, user, toast, isDemoMode]);
 
-  const { data: platformStats, isLoading: statsLoading } = useQuery({
+  const { data: platformStats, isLoading: statsLoading } = useQuery<any>({
     queryKey: ["/api/superadmin/stats"],
     retry: false,
   });
 
-  const { data: tenants, isLoading: tenantsLoading } = useQuery({
+  const { data: tenants, isLoading: tenantsLoading } = useQuery<any[]>({
     queryKey: ["/api/superadmin/tenants"],
     retry: false,
   });
 
-  if (isLoading || !isAuthenticated || user?.role !== 'superadmin') {
+  if (isLoading || (!isDemoMode && (!isAuthenticated || user?.role !== 'superadmin'))) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-white text-lg">Loading...</div>
@@ -232,14 +237,14 @@ export default function SuperAdminDashboard() {
                   </div>
                 ))}
               </div>
-            ) : tenants?.length === 0 ? (
+            ) : (tenants || []).length === 0 ? (
               <div className="text-center py-8">
                 <Building2 className="w-12 h-12 text-gray-600 mx-auto mb-4" />
                 <p className="text-gray-400">No tenants found</p>
               </div>
             ) : (
               <div className="space-y-4">
-                {tenants?.slice(0, 10).map((tenant: any) => (
+                {(tenants || []).slice(0, 10).map((tenant: any) => (
                   <div key={tenant.id} className="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg border border-border">
                     <div className="flex items-center space-x-4">
                       <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
