@@ -1,0 +1,110 @@
+2025-Aug-11 06:24:06.979151
+#16 0.176 > rest-express@1.0.0 build
+2025-Aug-11 06:24:06.979151
+#16 0.176 > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+2025-Aug-11 06:24:06.979151
+#16 0.176
+2025-Aug-11 06:24:07.166272
+#16 0.364 vite v5.4.19 building for production...
+2025-Aug-11 06:24:07.370550
+#16 0.417 transforming...
+2025-Aug-11 06:24:07.501809
+#16 0.699 Browserslist: browsers data (caniuse-lite) is 10 months old. Please run:
+2025-Aug-11 06:24:07.501809
+#16 0.699   npx update-browserslist-db@latest
+2025-Aug-11 06:24:07.501809
+#16 0.699   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+2025-Aug-11 06:24:11.503478
+#16 4.701 ✓ 1754 modules transformed.
+2025-Aug-11 06:24:11.776712
+#16 4.974 rendering chunks...
+2025-Aug-11 06:24:11.886080
+#16 4.984 computing gzip size...
+2025-Aug-11 06:24:11.886080
+#16 4.999 ../dist/public/index.html                   0.63 kB │ gzip:   0.38 kB
+2025-Aug-11 06:24:11.886080
+#16 4.999 ../dist/public/assets/index-BJSqTi55.css   72.29 kB │ gzip:  12.50 kB
+2025-Aug-11 06:24:11.886080
+#16 4.999
+2025-Aug-11 06:24:11.886080
+#16 4.999 (!) Some chunks are larger than 500 kB after minification. Consider:
+2025-Aug-11 06:24:11.886080
+#16 4.999 - Using dynamic import() to code-split the application
+2025-Aug-11 06:24:11.886080
+#16 4.999 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+2025-Aug-11 06:24:11.886080
+#16 4.999 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+2025-Aug-11 06:24:11.886080
+#16 4.999 ../dist/public/assets/index-DgO1Pibm.js   564.93 kB │ gzip: 151.13 kB
+2025-Aug-11 06:24:11.886080
+#16 5.000 ✓ built in 4.62s
+2025-Aug-11 06:24:11.886080
+#16 5.058
+2025-Aug-11 06:24:11.886080
+#16 5.058   dist/index.js  62.8kb
+2025-Aug-11 06:24:11.886080
+#16 5.058
+2025-Aug-11 06:24:11.886080
+#16 5.058 ⚡ Done in 8ms
+2025-Aug-11 06:24:11.886080
+#16 DONE 5.1s
+2025-Aug-11 06:24:12.351891
+#17 [production 8/8] COPY --from=builder --chown=nextjs:nodejs /app/dist ./dist
+2025-Aug-11 06:24:12.524608
+#17 DONE 0.0s
+2025-Aug-11 06:24:12.526444
+#18 exporting to image
+2025-Aug-11 06:24:12.526444
+#18 exporting layers
+2025-Aug-11 06:24:15.786106
+#18 exporting layers 3.4s done
+2025-Aug-11 06:24:15.817355
+#18 writing image sha256:b748a7c24214e6a2f4c5ea6b1ec9b3e043d1b5c1b0cacc8e533bd4f7cd10cf51 done
+2025-Aug-11 06:24:15.817355
+#18 naming to docker.io/library/jo0k88cw8g4484c80c0ggkcg:319b84d85ef3802bd3ba9b531947c12c095fe45b done
+2025-Aug-11 06:24:15.817355
+#18 DONE 3.4s
+2025-Aug-11 06:24:15.827803
+Building docker image completed.
+2025-Aug-11 06:24:15.830515
+----------------------------------------
+2025-Aug-11 06:24:15.832704
+Rolling update started.
+2025-Aug-11 06:24:16.015816
+[CMD]: docker exec fkk4gs00w8w4gkg88os48wko bash -c 'SOURCE_COMMIT=319b84d85ef3802bd3ba9b531947c12c095fe45b COOLIFY_URL=http://jo0k88cw8g4484c80c0ggkcg.195.35.20.130.sslip.io COOLIFY_FQDN=jo0k88cw8g4484c80c0ggkcg.195.35.20.130.sslip.io COOLIFY_BRANCH=main  docker compose --project-name jo0k88cw8g4484c80c0ggkcg --project-directory /artifacts/fkk4gs00w8w4gkg88os48wko -f /artifacts/fkk4gs00w8w4gkg88os48wko/docker-compose.yaml up --build -d'
+2025-Aug-11 06:24:16.015816
+time="2025-08-11T06:24:16Z" level=warning msg="Found orphan containers ([jo0k88cw8g4484c80c0ggkcg-061158299390]) for this project. If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up."
+2025-Aug-11 06:24:16.018332
+Container jo0k88cw8g4484c80c0ggkcg-062328386522  Creating
+2025-Aug-11 06:24:16.061016
+jo0k88cw8g4484c80c0ggkcg-062328386522 Your kernel does not support memory swappiness capabilities or the cgroup is not mounted. Memory swappiness discarded.
+2025-Aug-11 06:24:16.063758
+Container jo0k88cw8g4484c80c0ggkcg-062328386522  Created
+2025-Aug-11 06:24:16.063758
+Container jo0k88cw8g4484c80c0ggkcg-062328386522  Starting
+2025-Aug-11 06:24:16.228082
+Container jo0k88cw8g4484c80c0ggkcg-062328386522  Started
+2025-Aug-11 06:24:16.239053
+New container started.
+2025-Aug-11 06:24:16.243610
+Removing old containers.
+2025-Aug-11 06:24:16.536527
+[CMD]: docker stop --time=30 jo0k88cw8g4484c80c0ggkcg-061158299390
+2025-Aug-11 06:24:16.536527
+jo0k88cw8g4484c80c0ggkcg-061158299390
+2025-Aug-11 06:24:16.643207
+[CMD]: docker rm -f jo0k88cw8g4484c80c0ggkcg-061158299390
+2025-Aug-11 06:24:16.643207
+jo0k88cw8g4484c80c0ggkcg-061158299390
+2025-Aug-11 06:24:16.647117
+Rolling update completed.
+2025-Aug-11 06:24:16.911438
+Gracefully shutting down build container: fkk4gs00w8w4gkg88os48wko
+2025-Aug-11 06:24:17.114376
+[CMD]: docker stop --time=30 fkk4gs00w8w4gkg88os48wko
+2025-Aug-11 06:24:17.114376
+fkk4gs00w8w4gkg88os48wko
+2025-Aug-11 06:24:17.214005
+[CMD]: docker rm -f fkk4gs00w8w4gkg88os48wko
+2025-Aug-11 06:24:17.214005
+Error response from daemon: No such container: fkk4gs00w8w4gkg88os48wko
