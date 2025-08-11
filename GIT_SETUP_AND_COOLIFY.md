@@ -7,11 +7,11 @@
 Since your Git remote origin isn't configured, follow these steps:
 
 #### Option A: Connect to Existing GitHub Repository
-If you have a GitHub repository at `https://github.com/sameerhassan06/chatbots.git`:
+If you have a GitHub repository at `https://github.com/sameerhassan06/genie.git`:
 
 ```bash
 # Add the remote origin
-git remote add origin https://github.com/sameerhassan06/chatbots.git
+git remote add origin https://github.com/sameerhassan06/genie.git
 
 # Verify the remote is added
 git remote -v
@@ -84,7 +84,7 @@ Once your code is on GitHub, follow these steps in Coolify:
 4. Choose **Git Repository**
 
 #### 4.2 Repository Configuration
-- **Repository URL**: `https://github.com/sameerhassan06/YOUR-REPO-NAME.git`
+- **Repository URL**: `https://github.com/sameerhassan06/genie.git`
 - **Branch**: `main`
 - **Build Pack**: `Dockerfile`
 

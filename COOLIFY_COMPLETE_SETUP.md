@@ -43,7 +43,7 @@ Ensure these files exist in your repository:
 ### 2.3 Repository Configuration
 **Git Repository URL:**
 ```
-https://github.com/sameerhassan06/chatbots.git
+https://github.com/sameerhassan06/genie.git
 ```
 
 **Branch:** `main`
