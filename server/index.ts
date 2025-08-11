@@ -49,49 +49,51 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
   if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);
   } else {
-    // Production static file serving with multiple fallback paths
     console.log("=== PRODUCTION MODE DEBUGGING ===");
     console.log("Current working directory:", process.cwd());
-    console.log("Available directories:");
+    console.log("__dirname:", __dirname);
     
-    // Check multiple possible paths
     const possiblePaths = [
       path.join(process.cwd(), "public"),
       path.join(process.cwd(), "dist", "public"),
       path.join(__dirname, "public"),
-      path.join(__dirname, "..", "public")
+      path.join(__dirname, "..", "public"),
+      "/app/public",
+      "/app/dist/public"
     ];
     
     let publicPath = null;
     for (const testPath of possiblePaths) {
       console.log(`Checking: ${testPath} - exists: ${fs.existsSync(testPath)}`);
       if (fs.existsSync(testPath)) {
-        const files = fs.readdirSync(testPath);
-        console.log(`Files in ${testPath}:`, files);
-        if (files.length > 0) {
-          publicPath = testPath;
-          break;
+        try {
+          const files = fs.readdirSync(testPath);
+          console.log(`Files in ${testPath}:`, files);
+          if (files.length > 0 && files.some(f => f === 'index.html' || f.endsWith('.html'))) {
+            publicPath = testPath;
+            console.log(`✅ Found valid static files at: ${publicPath}`);
+            break;
+          }
+        } catch (error) {
+          console.log(`Error reading ${testPath}:`, error.message);
         }
       }
     }
     
     if (publicPath) {
-      console.log(`Using static path: ${publicPath}`);
+      console.log(`🚀 Serving static files from: ${publicPath}`);
       app.use(express.static(publicPath, {
         maxAge: '1d',
-        etag: false
+        etag: false,
+        index: 'index.html'
       }));
     } else {
-      console.error("ERROR: No public directory found!");
+      console.error("❌ ERROR: No valid public directory found!");
     }
     
-    // Catch-all for React router
     app.get("*", (req, res) => {
       if (req.path.startsWith("/api")) {
         return res.status(404).json({ error: "API route not found" });
@@ -112,16 +114,12 @@ app.use((req, res, next) => {
     });
   }
 
-  // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
   const port = parseInt(process.env.PORT || '5000', 10);
   server.listen({
     port,
     host: "0.0.0.0",
     reusePort: true,
   }, () => {
-    log(`serving on port ${port}`);
+    log(`🚀 Server running on port ${port} in ${process.env.NODE_ENV || 'development'} mode`);
   });
 })();
