@@ -1,0 +1,171 @@
+2025-Aug-11 06:50:26.197549
+2025-Aug-11 06:50:26.197549
+#9 [builder 4/6] RUN npm ci
+2025-Aug-11 06:50:26.428656
+#9 32.88
+2025-Aug-11 06:50:26.428656
+#9 32.88 added 584 packages, and audited 585 packages in 33s
+2025-Aug-11 06:50:26.428656
+#9 32.88
+2025-Aug-11 06:50:26.428656
+#9 32.88 72 packages are looking for funding
+2025-Aug-11 06:50:26.428656
+#9 32.88   run `npm fund` for details
+2025-Aug-11 06:50:26.428656
+#9 32.92
+2025-Aug-11 06:50:26.428656
+#9 32.92 11 vulnerabilities (3 low, 8 moderate)
+2025-Aug-11 06:50:26.428656
+#9 32.92
+2025-Aug-11 06:50:26.428656
+#9 32.92 To address issues that do not require attention, run:
+2025-Aug-11 06:50:26.428656
+#9 32.92   npm audit fix
+2025-Aug-11 06:50:26.428656
+#9 32.92
+2025-Aug-11 06:50:26.428656
+#9 32.92 To address all issues (including breaking changes), run:
+2025-Aug-11 06:50:26.428656
+#9 32.92   npm audit fix --force
+2025-Aug-11 06:50:26.428656
+#9 32.92
+2025-Aug-11 06:50:26.428656
+#9 32.92 Run `npm audit` for details.
+2025-Aug-11 06:50:26.428656
+#9 32.93 npm notice
+2025-Aug-11 06:50:26.428656
+#9 32.93 npm notice New major version of npm available! 10.8.2 -> 11.5.2
+2025-Aug-11 06:50:26.428656
+#9 32.93 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.5.2
+2025-Aug-11 06:50:26.428656
+#9 32.93 npm notice To update run: npm install -g npm@11.5.2
+2025-Aug-11 06:50:26.428656
+#9 32.93 npm notice
+2025-Aug-11 06:50:26.428656
+#9 DONE 33.1s
+2025-Aug-11 06:50:26.620100
+#13 [builder 5/6] COPY . .
+2025-Aug-11 06:50:26.620100
+#13 DONE 0.0s
+2025-Aug-11 06:50:26.620100
+2025-Aug-11 06:50:26.620100
+#14 [builder 6/6] RUN npm run build
+2025-Aug-11 06:50:26.641262
+#14 0.172
+2025-Aug-11 06:50:26.641262
+#14 0.172 > rest-express@1.0.0 build
+2025-Aug-11 06:50:26.641262
+#14 0.172 > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+2025-Aug-11 06:50:26.641262
+#14 0.172
+2025-Aug-11 06:50:26.834776
+#14 0.366 vite v5.4.19 building for production...
+2025-Aug-11 06:50:26.837387
+2025-Aug-11 06:50:27.039941
+#14 0.420 transforming...
+2025-Aug-11 06:50:27.184798
+#14 0.715 Browserslist: browsers data (caniuse-lite) is 10 months old. Please run:
+2025-Aug-11 06:50:27.184798
+#14 0.715   npx update-browserslist-db@latest
+2025-Aug-11 06:50:27.184798
+#14 0.715   Why you should do it regularly: https://github.com/browserslist/update-db#readme
+2025-Aug-11 06:50:31.134238
+#14 4.665 ✓ 1754 modules transformed.
+2025-Aug-11 06:50:31.416273
+#14 4.947 rendering chunks...
+2025-Aug-11 06:50:31.535267
+#14 4.957 computing gzip size...
+2025-Aug-11 06:50:31.542244
+#14 4.974 ../dist/public/index.html                   0.63 kB │ gzip:   0.38 kB
+2025-Aug-11 06:50:31.542244
+#14 4.974 ../dist/public/assets/index-BJSqTi55.css   72.29 kB │ gzip:  12.50 kB
+2025-Aug-11 06:50:31.542244
+#14 4.974 ../dist/public/assets/index-DgO1Pibm.js   564.93 kB │ gzip: 151.13 kB
+2025-Aug-11 06:50:31.542244
+#14 4.974
+2025-Aug-11 06:50:31.545885
+#14 4.974 (!) Some chunks are larger than 500 kB after minification. Consider:
+2025-Aug-11 06:50:31.545885
+#14 4.974 - Using dynamic import() to code-split the application
+2025-Aug-11 06:50:31.545885
+#14 4.974 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+2025-Aug-11 06:50:31.545885
+#14 4.974 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+2025-Aug-11 06:50:31.545885
+#14 4.975 ✓ built in 4.59s
+2025-Aug-11 06:50:31.545885
+#14 5.040
+2025-Aug-11 06:50:31.545885
+#14 5.040   dist/index.js  62.8kb
+2025-Aug-11 06:50:31.545885
+#14 5.040
+2025-Aug-11 06:50:31.545885
+#14 5.040 ⚡ Done in 10ms
+2025-Aug-11 06:50:31.545885
+#14 DONE 5.1s
+2025-Aug-11 06:50:31.726049
+#15 [production 6/7] COPY --from=builder /app/dist ./dist
+2025-Aug-11 06:50:31.726049
+#15 DONE 0.0s
+2025-Aug-11 06:50:31.726049
+2025-Aug-11 06:50:31.726049
+#16 [production 7/7] COPY --from=builder /app/dist/public ./dist/public
+2025-Aug-11 06:50:31.726049
+#16 DONE 0.0s
+2025-Aug-11 06:50:31.726049
+2025-Aug-11 06:50:31.726049
+#17 exporting to image
+2025-Aug-11 06:50:31.726049
+#17 exporting layers
+2025-Aug-11 06:50:35.777526
+#17 exporting layers 4.2s done
+2025-Aug-11 06:50:35.796247
+#17 writing image sha256:376d10b8b0efa8872749dd3f1aa11e6413102dda3e52c35719d84bbf3ea4d75b done
+2025-Aug-11 06:50:35.796247
+#17 naming to docker.io/library/jo0k88cw8g4484c80c0ggkcg:a2dd7385c92c4907aa2f8c91b4763ad388f1ea22 done
+2025-Aug-11 06:50:35.796247
+#17 DONE 4.2s
+2025-Aug-11 06:50:35.806570
+Building docker image completed.
+2025-Aug-11 06:50:35.809102
+----------------------------------------
+2025-Aug-11 06:50:35.811174
+Rolling update started.
+2025-Aug-11 06:50:35.989963
+[CMD]: docker exec kocosc4cww4oog8g8gkwkgwo bash -c 'SOURCE_COMMIT=a2dd7385c92c4907aa2f8c91b4763ad388f1ea22 COOLIFY_URL=http://jo0k88cw8g4484c80c0ggkcg.195.35.20.130.sslip.io COOLIFY_FQDN=jo0k88cw8g4484c80c0ggkcg.195.35.20.130.sslip.io COOLIFY_BRANCH=main  docker compose --project-name jo0k88cw8g4484c80c0ggkcg --project-directory /artifacts/kocosc4cww4oog8g8gkwkgwo -f /artifacts/kocosc4cww4oog8g8gkwkgwo/docker-compose.yaml up --build -d'
+2025-Aug-11 06:50:35.989963
+time="2025-08-11T06:50:35Z" level=warning msg="Found orphan containers ([jo0k88cw8g4484c80c0ggkcg-064744783947]) for this project. If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up."
+2025-Aug-11 06:50:35.989963
+Container jo0k88cw8g4484c80c0ggkcg-064947359877  Creating
+2025-Aug-11 06:50:36.036202
+jo0k88cw8g4484c80c0ggkcg-064947359877 Your kernel does not support memory swappiness capabilities or the cgroup is not mounted. Memory swappiness discarded.
+2025-Aug-11 06:50:36.038628
+Container jo0k88cw8g4484c80c0ggkcg-064947359877  Created
+2025-Aug-11 06:50:36.044041
+Container jo0k88cw8g4484c80c0ggkcg-064947359877  Starting
+2025-Aug-11 06:50:36.224525
+Container jo0k88cw8g4484c80c0ggkcg-064947359877  Started
+2025-Aug-11 06:50:36.237151
+New container started.
+2025-Aug-11 06:50:36.245567
+Removing old containers.
+2025-Aug-11 06:50:36.534984
+[CMD]: docker stop --time=30 jo0k88cw8g4484c80c0ggkcg-064744783947
+2025-Aug-11 06:50:36.534984
+jo0k88cw8g4484c80c0ggkcg-064744783947
+2025-Aug-11 06:50:36.665889
+[CMD]: docker rm -f jo0k88cw8g4484c80c0ggkcg-064744783947
+2025-Aug-11 06:50:36.665889
+jo0k88cw8g4484c80c0ggkcg-064744783947
+2025-Aug-11 06:50:36.671147
+Rolling update completed.
+2025-Aug-11 06:50:36.933075
+Gracefully shutting down build container: kocosc4cww4oog8g8gkwkgwo
+2025-Aug-11 06:50:37.114241
+[CMD]: docker stop --time=30 kocosc4cww4oog8g8gkwkgwo
+2025-Aug-11 06:50:37.114241
+kocosc4cww4oog8g8gkwkgwo
+2025-Aug-11 06:50:37.219281
+[CMD]: docker rm -f kocosc4cww4oog8g8gkwkgwo
+2025-Aug-11 06:50:37.219281
+Error response from daemon: No such container: kocosc4cww4oog8g8gkwkgwo
