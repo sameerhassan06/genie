@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatBot SaaS - Business Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    primary: '#6366F1',
+                    secondary: '#8B5CF6',
+                    accent: '#06B6D4',
+                    success: '#10B981',
+                    warning: '#F59E0B',
+                    error: '#EF4444',
+                    dark: '#0F172A',
+                    surface: '#1E293B',
+                    border: '#334155'
+                },
+                fontFamily: {
+                    'inter': ['Inter', 'sans-serif']
+                }
+            }
+        }
+    };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-dark text-white font-inter antialiased">
+
+<!-- @COMPONENT: MainLayout -->
+<div class="flex h-screen overflow-hidden">
+    
+    <!-- @COMPONENT: Sidebar -->
+    <div id="sidebar" class="hidden lg:flex lg:flex-shrink-0">
+        <div class="flex flex-col w-64">
+            <div class="flex flex-col flex-grow bg-surface border-r border-border overflow-y-auto">
+                
+                <!-- Logo -->
+                <div class="flex items-center flex-shrink-0 px-6 py-6">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                            <i class="fas fa-robot text-white text-lg"></i>
+                        </div>
+                        <span class="ml-3 text-xl font-bold">ChatBot Pro</span>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="flex-1 px-4 pb-4 space-y-1">
+                    <a href="#" class="bg-primary/10 text-primary border-r-2 border-primary group flex items-center px-3 py-2 text-sm font-medium rounded-lg">
+                        <i class="fas fa-chart-line mr-3 text-sm"></i>
+                        Dashboard
+                    </a>
+                    <a href="#" class="text-gray-300 hover:bg-gray-700 group flex items-center px-3 py-2 text-sm font-medium rounded-lg">
+                        <i class="fas fa-palette mr-3 text-sm"></i>
+                        Chatbot Designer
+                    </a>
+                    <a href="#" class="text-gray-300 hover:bg-gray-700 group flex items-center px-3 py-2 text-sm font-medium rounded-lg">
+                        <i class="fas fa-users mr-3 text-sm"></i>
+                        Leads Management
+                    </a>
+                    <a href="#" class="text-gray-300 hover:bg-gray-700 group flex items-center px-3 py-2 text-sm font-medium rounded-lg">
+                        <i class="fas fa-calendar-alt mr-3 text-sm"></i>
+                        Appointments
+                    </a>
+                    <a href="#" class="text-gray-300 hover:bg-gray-700 group flex items-center px-3 py-2 text-sm font-medium rounded-lg">
+                        <i class="fas fa-box mr-3 text-sm"></i>
+                        Products & Services
+                    </a>
+                    <a href="#" class="text-gray-300 hover:bg-gray-700 group flex items-center px-3 py-2 text-sm font-medium rounded-lg">
+                        <i class="fas fa-question-circle mr-3 text-sm"></i>
+                        Q&A Management
+                    </a>
+                    <a href="#" class="text-gray-300 hover:bg-gray-700 group flex items-center px-3 py-2 text-sm font-medium rounded-lg">
+                        <i class="fas fa-brain mr-3 text-sm"></i>
+                        AI Training
+                    </a>
+                    <a href="#" class="text-gray-300 hover:bg-gray-700 group flex items-center px-3 py-2 text-sm font-medium rounded-lg">
+                        <i class="fas fa-cog mr-3 text-sm"></i>
+                        Settings
+                    </a>
+                </nav>
+
+                <!-- User Profile -->
+                <div class="flex-shrink-0 p-4">
+                    <div class="flex items-center">
+                        <!-- Professional business owner headshot -->
+                        <img class="inline-block h-10 w-10 rounded-full object-cover" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=400" alt="Profile">
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-white" data-bind="user.name">John Smith</p>
+                            <p class="text-xs font-medium text-gray-400" data-bind="user.role">Business Admin</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: Sidebar -->
+
+    <!-- @COMPONENT: MainContent -->
+    <div class="flex flex-col flex-1 overflow-hidden">
+        
+        <!-- @COMPONENT: TopNavbar -->
+        <header class="bg-surface border-b border-border">
+            <div class="flex items-center justify-between px-6 py-4">
+                <div class="flex items-center">
+                    <button class="lg:hidden mr-3 text-gray-400 hover:text-white">
+                        <i class="fas fa-bars text-lg"></i>
+                    </button>
+                    <h1 class="text-2xl font-bold">Dashboard Overview</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <!-- Theme Toggle -->
+                    <button class="p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gray-700">
+                        <i class="fas fa-moon text-lg"></i>
+                    </button>
+                    <!-- Notifications -->
+                    <button class="p-2 text-gray-400 hover:text-white rounded-lg hover:bg-gray-700 relative">
+                        <i class="fas fa-bell text-lg"></i>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
+                    </button>
+                    <!-- Profile Dropdown -->
+                    <div class="relative">
+                        <button class="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                            <!-- Same professional business owner headshot -->
+                            <img class="h-8 w-8 rounded-full object-cover" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=400" alt="Profile">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- @END_COMPONENT: TopNavbar -->
+
+        <!-- @COMPONENT: DashboardContent -->
+        <main class="flex-1 overflow-y-auto bg-dark p-6">
+            
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- @COMPONENT: StatCard -->
+                <div class="bg-surface border border-border rounded-xl p-6 hover:border-primary/50 transition-colors">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-primary/10 rounded-lg">
+                            <i class="fas fa-comments text-primary text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-400">Total Conversations</p>
+                            <p class="text-2xl font-bold text-white" data-bind="stats.conversations">12,487</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm">
+                        <span class="text-success flex items-center">
+                            <i class="fas fa-arrow-up mr-1"></i>
+                            12.5%
+                        </span>
+                        <span class="text-gray-400 ml-2">vs last month</span>
+                    </div>
+                </div>
+
+                <div class="bg-surface border border-border rounded-xl p-6 hover:border-secondary/50 transition-colors">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-secondary/10 rounded-lg">
+                            <i class="fas fa-user-plus text-secondary text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-400">New Leads</p>
+                            <p class="text-2xl font-bold text-white" data-bind="stats.leads">284</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm">
+                        <span class="text-success flex items-center">
+                            <i class="fas fa-arrow-up mr-1"></i>
+                            8.2%
+                        </span>
+                        <span class="text-gray-400 ml-2">vs last month</span>
+                    </div>
+                </div>
+
+                <div class="bg-surface border border-border rounded-xl p-6 hover:border-accent/50 transition-colors">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-accent/10 rounded-lg">
+                            <i class="fas fa-calendar-check text-accent text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-400">Appointments</p>
+                            <p class="text-2xl font-bold text-white" data-bind="stats.appointments">156</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm">
+                        <span class="text-success flex items-center">
+                            <i class="fas fa-arrow-up mr-1"></i>
+                            15.3%
+                        </span>
+                        <span class="text-gray-400 ml-2">vs last month</span>
+                    </div>
+                </div>
+
+                <div class="bg-surface border border-border rounded-xl p-6 hover:border-success/50 transition-colors">
+                    <div class="flex items-center">
+                        <div class="p-2 bg-success/10 rounded-lg">
+                            <i class="fas fa-dollar-sign text-success text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm font-medium text-gray-400">Revenue</p>
+                            <p class="text-2xl font-bold text-white" data-bind="stats.revenue">$24,567</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm">
+                        <span class="text-success flex items-center">
+                            <i class="fas fa-arrow-up mr-1"></i>
+                            23.1%
+                        </span>
+                        <span class="text-gray-400 ml-2">vs last month</span>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: StatCard -->
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                
+                <!-- @COMPONENT: ConversationsChart -->
+                <div class="lg:col-span-2 bg-surface border border-border rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold text-white">Conversation Analytics</h3>
+                        <select class="bg-gray-700 border border-border rounded-lg px-3 py-2 text-sm text-white">
+                            <option>Last 7 days</option>
+                            <option>Last 30 days</option>
+                            <option>Last 90 days</option>
+                        </select>
+                    </div>
+                    <div class="h-80">
+                        <canvas id="conversationsChart"></canvas>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: ConversationsChart -->
+
+                <!-- @COMPONENT: RecentActivity -->
+                <div class="bg-surface border border-border rounded-xl p-6">
+                    <h3 class="text-lg font-semibold text-white mb-6">Recent Activity</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-primary rounded-full mt-2"></div>
+                            <div class="flex-1">
+                                <p class="text-sm text-white">New lead captured from website</p>
+                                <p class="text-xs text-gray-400">2 minutes ago</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-success rounded-full mt-2"></div>
+                            <div class="flex-1">
+                                <p class="text-sm text-white">Appointment scheduled via chatbot</p>
+                                <p class="text-xs text-gray-400">5 minutes ago</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-accent rounded-full mt-2"></div>
+                            <div class="flex-1">
+                                <p class="text-sm text-white">AI training completed for new content</p>
+                                <p class="text-xs text-gray-400">12 minutes ago</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-warning rounded-full mt-2"></div>
+                            <div class="flex-1">
+                                <p class="text-sm text-white">Customer inquiry about pricing</p>
+                                <p class="text-xs text-gray-400">15 minutes ago</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="w-2 h-2 bg-secondary rounded-full mt-2"></div>
+                            <div class="flex-1">
+                                <p class="text-sm text-white">New chatbot flow published</p>
+                                <p class="text-xs text-gray-400">1 hour ago</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="w-full mt-4 text-primary hover:text-primary/80 text-sm font-medium">
+                        View all activity
+                    </button>
+                </div>
+                <!-- @END_COMPONENT: RecentActivity -->
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                
+                <!-- @COMPONENT: LeadsTable -->
+                <div class="bg-surface border border-border rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold text-white">Recent Leads</h3>
+                        <button class="text-primary hover:text-primary/80 text-sm font-medium">
+                            View all leads
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-border">
+                                    <th class="text-left text-xs font-medium text-gray-400 uppercase tracking-wider pb-3">Name</th>
+                                    <th class="text-left text-xs font-medium text-gray-400 uppercase tracking-wider pb-3">Source</th>
+                                    <th class="text-left text-xs font-medium text-gray-400 uppercase tracking-wider pb-3">Score</th>
+                                    <th class="text-left text-xs font-medium text-gray-400 uppercase tracking-wider pb-3">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-border">
+                                <!-- @MAP: leads.map(lead => ( -->
+                                <tr data-mock="true">
+                                    <td class="py-4">
+                                        <div class="flex items-center">
+                                            <!-- Professional woman business headshot -->
+                                            <img class="h-8 w-8 rounded-full object-cover" src="https://pixabay.com/get/g1d37e199d913427a791535dda0b355a3da8a7c8a68a4248cffa79c70ec00f098aaca873436b64209eb491c456c896e97bdc1725bd4b9c8bc95e95e88664c1a69_1280.jpg" alt="Lead">
+                                            <div class="ml-3">
+                                                <p class="text-sm font-medium text-white" data-bind="lead.name">Sarah Johnson</p>
+                                                <p class="text-xs text-gray-400" data-bind="lead.email">sarah@example.com</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4">
+                                        <span class="text-sm text-gray-300">Chatbot</span>
+                                    </td>
+                                    <td class="py-4">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success/10 text-success">
+                                            95
+                                        </span>
+                                    </td>
+                                    <td class="py-4">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-warning/10 text-warning">
+                                            Hot
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr data-mock="true">
+                                    <td class="py-4">
+                                        <div class="flex items-center">
+                                            <!-- Professional man business headshot -->
+                                            <img class="h-8 w-8 rounded-full object-cover" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=400" alt="Lead">
+                                            <div class="ml-3">
+                                                <p class="text-sm font-medium text-white" data-bind="lead.name">Mike Chen</p>
+                                                <p class="text-xs text-gray-400" data-bind="lead.email">mike@company.com</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4">
+                                        <span class="text-sm text-gray-300">Website</span>
+                                    </td>
+                                    <td class="py-4">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent/10 text-accent">
+                                            78
+                                        </span>
+                                    </td>
+                                    <td class="py-4">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                                            Warm
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr data-mock="true">
+                                    <td class="py-4">
+                                        <div class="flex items-center">
+                                            <!-- Professional woman business headshot -->
+                                            <img class="h-8 w-8 rounded-full object-cover" src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=400" alt="Lead">
+                                            <div class="ml-3">
+                                                <p class="text-sm font-medium text-white" data-bind="lead.name">Emily Davis</p>
+                                                <p class="text-xs text-gray-400" data-bind="lead.email">emily@startup.io</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-4">
+                                        <span class="text-sm text-gray-300">Chatbot</span>
+                                    </td>
+                                    <td class="py-4">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-500/10 text-gray-400">
+                                            45
+                                        </span>
+                                    </td>
+                                    <td class="py-4">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-500/10 text-gray-400">
+                                            Cold
+                                        </span>
+                                    </td>
+                                </tr>
+                                <!-- @END_MAP )) -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: LeadsTable -->
+
+                <!-- @COMPONENT: AppointmentsTable -->
+                <div class="bg-surface border border-border rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-semibold text-white">Upcoming Appointments</h3>
+                        <button class="text-primary hover:text-primary/80 text-sm font-medium">
+                            View calendar
+                        </button>
+                    </div>
+                    <div class="space-y-4">
+                        <!-- @MAP: appointments.map(appointment => ( -->
+                        <div class="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg border border-border" data-mock="true">
+                            <div class="flex items-center space-x-3">
+                                <!-- Professional client headshot -->
+                                <img class="h-10 w-10 rounded-full object-cover" src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=400" alt="Client">
+                                <div>
+                                    <p class="text-sm font-medium text-white" data-bind="appointment.clientName">Jessica Wilson</p>
+                                    <p class="text-xs text-gray-400" data-bind="appointment.service">Consultation Call</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-white" data-bind="appointment.time">2:30 PM</p>
+                                <p class="text-xs text-gray-400" data-bind="appointment.date">Today</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg border border-border" data-mock="true">
+                            <div class="flex items-center space-x-3">
+                                <!-- Professional client headshot -->
+                                <img class="h-10 w-10 rounded-full object-cover" src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=400" alt="Client">
+                                <div>
+                                    <p class="text-sm font-medium text-white" data-bind="appointment.clientName">David Park</p>
+                                    <p class="text-xs text-gray-400" data-bind="appointment.service">Product Demo</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-white" data-bind="appointment.time">10:00 AM</p>
+                                <p class="text-xs text-gray-400" data-bind="appointment.date">Tomorrow</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg border border-border" data-mock="true">
+                            <div class="flex items-center space-x-3">
+                                <!-- Professional client headshot -->
+                                <img class="h-10 w-10 rounded-full object-cover" src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=400" alt="Client">
+                                <div>
+                                    <p class="text-sm font-medium text-white" data-bind="appointment.clientName">Lisa Rodriguez</p>
+                                    <p class="text-xs text-gray-400" data-bind="appointment.service">Strategy Session</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-white" data-bind="appointment.time">3:00 PM</p>
+                                <p class="text-xs text-gray-400" data-bind="appointment.date">Thu, Dec 14</p>
+                            </div>
+                        </div>
+                        <!-- @END_MAP )) -->
+                    </div>
+                </div>
+                <!-- @END_COMPONENT: AppointmentsTable -->
+            </div>
+
+            <!-- @COMPONENT: ChatbotPreview -->
+            <div class="bg-surface border border-border rounded-xl p-6 mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-semibold text-white">Chatbot Preview</h3>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-2 h-2 bg-success rounded-full"></span>
+                            <span class="text-sm text-gray-400">Live on website</span>
+                        </div>
+                        <button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                            Edit Chatbot
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Chatbot Widget Preview -->
+                    <div class="relative">
+                        <div class="bg-gray-900 rounded-lg p-4 min-h-96">
+                            <!-- Website mockup with chatbot -->
+                            <div class="bg-white rounded-t-lg p-4 h-64">
+                                <!-- Modern business website header with professional services imagery -->
+                                <img src="https://images.unsplash.com/photo-1560472355-536de3962603?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&h=300" alt="Professional business website" class="w-full h-32 object-cover rounded">
+                                <h2 class="text-gray-900 text-lg font-bold mt-2">Professional Services</h2>
+                                <p class="text-gray-600 text-sm">We help businesses grow with expert consulting...</p>
+                            </div>
+                            
+                            <!-- Chatbot Widget -->
+                            <div class="absolute bottom-6 right-6 w-80 bg-white rounded-lg shadow-2xl border">
+                                <div class="bg-primary text-white p-4 rounded-t-lg flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-robot text-sm"></i>
+                                        </div>
+                                        <span class="font-medium">AI Assistant</span>
+                                    </div>
+                                    <button class="text-white/80 hover:text-white">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="p-4 h-64 overflow-y-auto bg-gray-50">
+                                    <div class="space-y-3">
+                                        <div class="flex items-start space-x-2">
+                                            <div class="w-6 h-6 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                                                <i class="fas fa-robot text-white text-xs"></i>
+                                            </div>
+                                            <div class="bg-white p-3 rounded-lg shadow-sm max-w-xs">
+                                                <p class="text-sm text-gray-800">Hi! I'm here to help you learn about our services. What can I assist you with today?</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex justify-end">
+                                            <div class="bg-primary text-white p-3 rounded-lg max-w-xs">
+                                                <p class="text-sm">I'd like to know more about your consulting services</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start space-x-2">
+                                            <div class="w-6 h-6 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                                                <i class="fas fa-robot text-white text-xs"></i>
+                                            </div>
+                                            <div class="bg-white p-3 rounded-lg shadow-sm max-w-xs">
+                                                <p class="text-sm text-gray-800">Great! We offer strategic business consulting, digital transformation, and growth optimization. Would you like to schedule a free consultation?</p>
+                                                <div class="mt-2 space-y-1">
+                                                    <button class="w-full text-left text-primary hover:bg-primary/5 p-2 rounded text-sm">📅 Schedule consultation</button>
+                                                    <button class="w-full text-left text-primary hover:bg-primary/5 p-2 rounded text-sm">📄 View our services</button>
+                                                    <button class="w-full text-left text-primary hover:bg-primary/5 p-2 rounded text-sm">💬 Talk to an expert</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-3 border-t border-gray-200">
+                                    <div class="flex items-center space-x-2">
+                                        <input type="text" placeholder="Type your message..." class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
+                                        <button class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90">
+                                            <i class="fas fa-paper-plane text-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chatbot Analytics -->
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-400 mb-3">Today's Performance</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-gray-800/50 p-4 rounded-lg">
+                                    <p class="text-2xl font-bold text-white" data-bind="chatbot.conversations">147</p>
+                                    <p class="text-xs text-gray-400">Conversations</p>
+                                </div>
+                                <div class="bg-gray-800/50 p-4 rounded-lg">
+                                    <p class="text-2xl font-bold text-white" data-bind="chatbot.responses">98.5%</p>
+                                    <p class="text-xs text-gray-400">Response Rate</p>
+                                </div>
+                                <div class="bg-gray-800/50 p-4 rounded-lg">
+                                    <p class="text-2xl font-bold text-white" data-bind="chatbot.satisfaction">4.8</p>
+                                    <p class="text-xs text-gray-400">Satisfaction</p>
+                                </div>
+                                <div class="bg-gray-800/50 p-4 rounded-lg">
+                                    <p class="text-2xl font-bold text-white" data-bind="chatbot.conversions">23</p>
+                                    <p class="text-xs text-gray-400">Conversions</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-400 mb-3">Quick Actions</h4>
+                            <div class="space-y-2">
+                                <button class="w-full bg-primary/10 hover:bg-primary/20 text-primary p-3 rounded-lg text-sm font-medium text-left transition-colors">
+                                    <i class="fas fa-edit mr-2"></i>
+                                    Edit Welcome Message
+                                </button>
+                                <button class="w-full bg-secondary/10 hover:bg-secondary/20 text-secondary p-3 rounded-lg text-sm font-medium text-left transition-colors">
+                                    <i class="fas fa-brain mr-2"></i>
+                                    Train with New Content
+                                </button>
+                                <button class="w-full bg-accent/10 hover:bg-accent/20 text-accent p-3 rounded-lg text-sm font-medium text-left transition-colors">
+                                    <i class="fas fa-chart-bar mr-2"></i>
+                                    View Detailed Analytics
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: ChatbotPreview -->
+
+        </main>
+        <!-- @END_COMPONENT: DashboardContent -->
+
+    </div>
+    <!-- @END_COMPONENT: MainContent -->
+
+</div>
+<!-- @END_COMPONENT: MainLayout -->
+
+<!-- @COMPONENT: ChatWidget (floating bottom-right) -->
+<div id="chatWidget" class="fixed bottom-6 right-6 z-50">
+    <button id="chatToggle" class="bg-primary hover:bg-primary/90 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 hover:scale-110">
+        <i class="fas fa-comments text-xl"></i>
+    </button>
+</div>
+<!-- @END_COMPONENT: ChatWidget -->
+
+<script>
+(function() {
+    // Chart.js configuration for conversations analytics
+    const ctx = document.getElementById('conversationsChart');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Conversations',
+                    data: [120, 190, 300, 500, 200, 300, 450],
+                    borderColor: '#6366F1',
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Leads Generated',
+                    data: [80, 120, 180, 220, 140, 180, 200],
+                    borderColor: '#8B5CF6',
+                    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#ffffff'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#9CA3AF'
+                        },
+                        grid: {
+                            color: '#374151'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#9CA3AF'
+                        },
+                        grid: {
+                            color: '#374151'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Mobile sidebar toggle
+    const sidebarToggle = document.querySelector('.lg\\:hidden');
+    const sidebar = document.getElementById('sidebar');
+    
+    if (sidebarToggle && sidebar) {
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('hidden');
+            sidebar.classList.toggle('fixed');
+            sidebar.classList.toggle('inset-0');
+            sidebar.classList.toggle('z-50');
+        });
+    }
+
+    // Theme toggle functionality
+    const themeToggle = document.querySelector('.fa-moon').parentElement;
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function() {
+            // TODO: Implement theme switching logic
+            const icon = this.querySelector('i');
+            if (icon.classList.contains('fa-moon')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+    }
+
+    // Chat widget toggle
+    const chatToggle = document.getElementById('chatToggle');
+    if (chatToggle) {
+        chatToggle.addEventListener('click', function() {
+            // TODO: Implement chat widget opening logic
+            console.log('Chat widget clicked');
+        });
+    }
+
+    // Simulated real-time updates
+    setInterval(function() {
+        // TODO: Implement real-time data updates via WebSocket or polling
+        // This would update conversation counts, new leads, etc.
+    }, 30000);
+})();
+</script>
+
+</body>
+</html>
