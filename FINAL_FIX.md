@@ -1,36 +1,28 @@
-# Final Vercel Deployment Fix
+# Final Fix for 404 Issue - Simplified Dockerfile
 
-## Issue
-Build succeeds and creates files in `dist/public/` but Vercel can't find them in `dist/`.
+## Problem Analysis
+The 404 errors persist because of complex static file serving configuration. The symlinks and user permissions were creating conflicts.
 
-## Final Solution Applied
-Updated vercel.json to use a copy workaround:
+## Solution: Simplified Dockerfile
+Created a clean, simple Dockerfile that:
+1. Builds the application in builder stage
+2. Copies static files directly to `/app/public` (where server expects them)
+3. Removes symlinks and user switching complexity
+4. Runs as root for simplicity (common in containerized apps)
 
-```json
-{
-  "buildCommand": "vite build && mkdir -p dist && cp -r dist/public/* dist/ 2>/dev/null || true",
-  "outputDirectory": "dist",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/$1"
-    }
-  ]
-}
+## Key Changes
+- Direct copy: `COPY --from=builder /app/dist/public ./public`
+- Removed user switching that was causing permission issues
+- Simplified paths to match server expectations exactly
+- Removed debugging code for production readiness
+
+## Next Steps
+Push this simplified Dockerfile:
+
+```bash
+git add Dockerfile
+git commit -m "Simplify Dockerfile to fix static file serving"
+git push origin main
 ```
 
-This:
-1. Runs `vite build` (creates files in dist/public/)
-2. Creates dist/ directory if it doesn't exist
-3. Copies all files from dist/public/ to dist/
-4. Vercel finds files in the expected dist/ location
-
-## Backup Option
-If this still doesn't work, manually update package.json build script:
-```json
-"build": "vite build"
-```
-
-## Expected Result
-✅ Successful Vercel deployment
-✅ Frontend demo showcasing your platform UI
+Then redeploy in Coolify. This should resolve the 404 issues and make your platform fully accessible.

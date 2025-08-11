@@ -22,6 +22,10 @@ FROM node:18-alpine AS production
 # Install dumb-init for proper signal handling
 RUN apk add --no-cache dumb-init
 
+# Create app user
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001
+
 # Set working directory
 WORKDIR /app
 
@@ -30,10 +34,20 @@ COPY package*.json ./
 RUN npm ci --only=production && npm cache clean --force
 
 # Copy built application from builder stage
-COPY --from=builder /app/dist ./dist
+COPY --from=builder --chown=nextjs:nodejs /app/dist ./dist
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
 
-# Copy static files directly to expected location
-COPY --from=builder /app/dist/public ./public
+# Debug: List contents and create proper directory structure
+RUN ls -la dist/ && ls -la dist/public/ || echo "public dir not found"
+
+# Create symlink for static files - server expects 'public' directory relative to index.js  
+RUN ln -sf dist/public public || mkdir -p public
+
+# Switch to non-root user
+USER nextjs
+
+# Debug: Verify final structure
+RUN ls -la && ls -la public/ || echo "final public check failed"
 
 # Expose port
 EXPOSE 5000
@@ -41,6 +55,9 @@ EXPOSE 5000
 # Set environment
 ENV NODE_ENV=production
 ENV PORT=5000
+
+# Debug startup
+RUN echo "Container ready with NODE_ENV=$NODE_ENV PORT=$PORT"
 
 # Start the application
 CMD ["dumb-init", "node", "dist/index.js"]

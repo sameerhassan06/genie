@@ -1,0 +1,176 @@
+2025-Aug-11 06:37:01.942894
+Starting deployment of sameerhassan06/genie:main to localhost.
+2025-Aug-11 06:37:02.079990
+Preparing container with helper image: ghcr.io/coollabsio/coolify-helper:1.0.8.
+2025-Aug-11 06:37:02.158075
+[CMD]: docker stop --time=30 z00ko8oc48kwgcskoskcs88c
+2025-Aug-11 06:37:02.158075
+Error response from daemon: No such container: z00ko8oc48kwgcskoskcs88c
+2025-Aug-11 06:37:02.242344
+[CMD]: docker rm -f z00ko8oc48kwgcskoskcs88c
+2025-Aug-11 06:37:02.242344
+Error response from daemon: No such container: z00ko8oc48kwgcskoskcs88c
+2025-Aug-11 06:37:02.350484
+[CMD]: docker run -d --network coolify --name z00ko8oc48kwgcskoskcs88c --rm -v /var/run/docker.sock:/var/run/docker.sock ghcr.io/coollabsio/coolify-helper:1.0.8
+2025-Aug-11 06:37:02.350484
+d8c37b9b70d9b62785635c097130ae00a3e5885dd68681064a1c4d8f564518a1
+2025-Aug-11 06:37:03.506152
+[CMD]: docker exec z00ko8oc48kwgcskoskcs88c bash -c 'GIT_SSH_COMMAND="ssh -o ConnectTimeout=30 -p 22 -o Port=22 -o LogLevel=ERROR -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" git ls-remote https://github.com/sameerhassan06/genie main'
+2025-Aug-11 06:37:03.506152
+39892845f3f04faa799e65ad10b2773e7f8d17a5	refs/heads/main
+2025-Aug-11 06:37:03.515301
+----------------------------------------
+2025-Aug-11 06:37:03.517024
+Importing sameerhassan06/genie:main (commit sha HEAD) to /artifacts/z00ko8oc48kwgcskoskcs88c.
+2025-Aug-11 06:37:03.640750
+[CMD]: docker exec z00ko8oc48kwgcskoskcs88c bash -c 'git clone -b "main" https://github.com/sameerhassan06/genie /artifacts/z00ko8oc48kwgcskoskcs88c && cd /artifacts/z00ko8oc48kwgcskoskcs88c && sed -i "s#git@\(.*\):#https://\1/#g" /artifacts/z00ko8oc48kwgcskoskcs88c/.gitmodules || true && cd /artifacts/z00ko8oc48kwgcskoskcs88c && GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" git submodule update --init --recursive && cd /artifacts/z00ko8oc48kwgcskoskcs88c && GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" git lfs pull'
+2025-Aug-11 06:37:03.640750
+Cloning into '/artifacts/z00ko8oc48kwgcskoskcs88c'...
+2025-Aug-11 06:37:05.535333
+sed: /artifacts/z00ko8oc48kwgcskoskcs88c/.gitmodules: No such file or directory
+2025-Aug-11 06:37:05.922278
+[CMD]: docker exec z00ko8oc48kwgcskoskcs88c bash -c 'cd /artifacts/z00ko8oc48kwgcskoskcs88c && git log -1 39892845f3f04faa799e65ad10b2773e7f8d17a5 --pretty=%B'
+2025-Aug-11 06:37:05.922278
+Update Dockerfile
+2025-Aug-11 06:37:06.011015
+[CMD]: docker images -q jo0k88cw8g4484c80c0ggkcg:39892845f3f04faa799e65ad10b2773e7f8d17a5 2>/dev/null
+2025-Aug-11 06:37:06.011015
+3dd2933998ae
+2025-Aug-11 06:37:06.020943
+No configuration changed & image found (jo0k88cw8g4484c80c0ggkcg:39892845f3f04faa799e65ad10b2773e7f8d17a5) with the same Git Commit SHA. Build step skipped.
+2025-Aug-11 06:37:06.614592
+[CMD]: docker exec z00ko8oc48kwgcskoskcs88c bash -c 'cat /artifacts/z00ko8oc48kwgcskoskcs88c/Dockerfile'
+2025-Aug-11 06:37:06.614592
+# Multi-stage build for Node.js application
+2025-Aug-11 06:37:06.614592
+FROM node:18-alpine AS builder
+2025-Aug-11 06:37:06.614592
+2025-Aug-11 06:37:06.614592
+# Set working directory
+2025-Aug-11 06:37:06.614592
+WORKDIR /app
+2025-Aug-11 06:37:06.614592
+2025-Aug-11 06:37:06.614592
+# Copy package files
+2025-Aug-11 06:37:06.614592
+COPY package*.json ./
+2025-Aug-11 06:37:06.614592
+2025-Aug-11 06:37:06.614592
+# Install ALL dependencies (including dev dependencies for build)
+2025-Aug-11 06:37:06.614592
+RUN npm ci
+2025-Aug-11 06:37:06.614592
+2025-Aug-11 06:37:06.614592
+# Copy source code
+2025-Aug-11 06:37:06.614592
+COPY . .
+2025-Aug-11 06:37:06.614592
+2025-Aug-11 06:37:06.614592
+# Build the application
+2025-Aug-11 06:37:06.614592
+RUN npm run build
+2025-Aug-11 06:37:06.614592
+2025-Aug-11 06:37:06.614592
+# Production stage
+2025-Aug-11 06:37:06.614592
+FROM node:18-alpine AS production
+2025-Aug-11 06:37:06.614592
+2025-Aug-11 06:37:06.614592
+# Install dumb-init for proper signal handling
+2025-Aug-11 06:37:06.614592
+RUN apk add --no-cache dumb-init
+2025-Aug-11 06:37:06.614592
+2025-Aug-11 06:37:06.614592
+# Create app user
+2025-Aug-11 06:37:06.614592
+RUN addgroup -g 1001 -S nodejs
+2025-Aug-11 06:37:06.614592
+RUN adduser -S nextjs -u 1001
+2025-Aug-11 06:37:06.614592
+2025-Aug-11 06:37:06.614592
+# Set working directory
+2025-Aug-11 06:37:06.614592
+WORKDIR /app
+2025-Aug-11 06:37:06.614592
+2025-Aug-11 06:37:06.614592
+# Copy package files and install only production dependencies
+2025-Aug-11 06:37:06.614592
+COPY package*.json ./
+2025-Aug-11 06:37:06.614592
+RUN npm ci --only=production && npm cache clean --force
+2025-Aug-11 06:37:06.614592
+2025-Aug-11 06:37:06.614592
+# Copy built application from builder stage
+2025-Aug-11 06:37:06.614592
+COPY --from=builder --chown=nextjs:nodejs /app/dist ./dist
+2025-Aug-11 06:37:06.614592
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+2025-Aug-11 06:37:06.614592
+2025-Aug-11 06:37:06.614592
+# Create symlink for static files - server expects 'public' directory relative to index.js
+2025-Aug-11 06:37:06.614592
+RUN ln -sf dist/public public
+2025-Aug-11 06:37:06.614592
+2025-Aug-11 06:37:06.614592
+# Switch to non-root user
+2025-Aug-11 06:37:06.614592
+USER nextjs
+2025-Aug-11 06:37:06.614592
+2025-Aug-11 06:37:06.614592
+# Expose port
+2025-Aug-11 06:37:06.614592
+EXPOSE 5000
+2025-Aug-11 06:37:06.614592
+2025-Aug-11 06:37:06.614592
+# Set environment
+2025-Aug-11 06:37:06.614592
+ENV NODE_ENV=production
+2025-Aug-11 06:37:06.614592
+ENV PORT=5000
+2025-Aug-11 06:37:06.614592
+2025-Aug-11 06:37:06.614592
+# Start the application
+2025-Aug-11 06:37:06.614592
+CMD ["dumb-init", "node", "dist/index.js"]
+2025-Aug-11 06:37:06.781368
+----------------------------------------
+2025-Aug-11 06:37:06.783623
+Rolling update started.
+2025-Aug-11 06:37:06.969833
+[CMD]: docker exec z00ko8oc48kwgcskoskcs88c bash -c 'SOURCE_COMMIT=39892845f3f04faa799e65ad10b2773e7f8d17a5 COOLIFY_URL=http://jo0k88cw8g4484c80c0ggkcg.195.35.20.130.sslip.io COOLIFY_FQDN=jo0k88cw8g4484c80c0ggkcg.195.35.20.130.sslip.io COOLIFY_BRANCH=main  docker compose --project-name jo0k88cw8g4484c80c0ggkcg --project-directory /artifacts/z00ko8oc48kwgcskoskcs88c -f /artifacts/z00ko8oc48kwgcskoskcs88c/docker-compose.yaml up --build -d'
+2025-Aug-11 06:37:06.969833
+time="2025-08-11T06:37:06Z" level=warning msg="Found orphan containers ([jo0k88cw8g4484c80c0ggkcg-063614983693]) for this project. If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up."
+2025-Aug-11 06:37:06.969833
+Container jo0k88cw8g4484c80c0ggkcg-063700629991  Creating
+2025-Aug-11 06:37:07.050706
+jo0k88cw8g4484c80c0ggkcg-063700629991 Your kernel does not support memory swappiness capabilities or the cgroup is not mounted. Memory swappiness discarded.
+2025-Aug-11 06:37:07.056546
+Container jo0k88cw8g4484c80c0ggkcg-063700629991  Created
+2025-Aug-11 06:37:07.056546
+Container jo0k88cw8g4484c80c0ggkcg-063700629991  Starting
+2025-Aug-11 06:37:07.248203
+Container jo0k88cw8g4484c80c0ggkcg-063700629991  Started
+2025-Aug-11 06:37:07.260118
+New container started.
+2025-Aug-11 06:37:07.262291
+Removing old containers.
+2025-Aug-11 06:37:07.692773
+[CMD]: docker stop --time=30 jo0k88cw8g4484c80c0ggkcg-063614983693
+2025-Aug-11 06:37:07.692773
+jo0k88cw8g4484c80c0ggkcg-063614983693
+2025-Aug-11 06:37:07.925703
+[CMD]: docker rm -f jo0k88cw8g4484c80c0ggkcg-063614983693
+2025-Aug-11 06:37:07.925703
+jo0k88cw8g4484c80c0ggkcg-063614983693
+2025-Aug-11 06:37:07.930799
+Rolling update completed.
+2025-Aug-11 06:37:08.549262
+Gracefully shutting down build container: z00ko8oc48kwgcskoskcs88c
+2025-Aug-11 06:37:08.974485
+[CMD]: docker stop --time=30 z00ko8oc48kwgcskoskcs88c
+2025-Aug-11 06:37:08.974485
+z00ko8oc48kwgcskoskcs88c
+2025-Aug-11 06:37:09.247858
+[CMD]: docker rm -f z00ko8oc48kwgcskoskcs88c
+2025-Aug-11 06:37:09.247858
+Error response from daemon: No such container: z00ko8oc48kwgcskoskcs88c
