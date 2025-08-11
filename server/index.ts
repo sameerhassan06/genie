@@ -1,7 +1,8 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, log } from "./vite";
-import { setupProduction } from "./production";
+import path from "path";
+import fs from "fs";
 
 const app = express();
 app.use(express.json());
@@ -54,7 +55,29 @@ app.use((req, res, next) => {
   if (process.env.NODE_ENV === "development") {
     await setupVite(app, server);
   } else {
-    setupProduction(app);
+    // Production static file serving - simple and direct
+    const publicPath = path.join(process.cwd(), "public");
+    console.log("Production mode - serving from:", publicPath);
+    console.log("Directory exists:", fs.existsSync(publicPath));
+    
+    if (fs.existsSync(publicPath)) {
+      const files = fs.readdirSync(publicPath);
+      console.log("Files in public:", files);
+      app.use(express.static(publicPath));
+    }
+    
+    // Catch-all for React router
+    app.get("*", (req, res) => {
+      if (req.path.startsWith("/api")) {
+        return res.status(404).json({ error: "API route not found" });
+      }
+      const indexPath = path.join(publicPath, "index.html");
+      if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+      } else {
+        res.status(404).send("App not found");
+      }
+    });
   }
 
   // ALWAYS serve the app on the port specified in the environment variable PORT
