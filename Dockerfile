@@ -35,6 +35,10 @@ RUN npm ci --only=production && npm cache clean --force
 
 # Copy built application from builder stage
 COPY --from=builder --chown=nextjs:nodejs /app/dist ./dist
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+
+# Create symlink for static files - server expects 'public' directory relative to index.js
+RUN ln -sf dist/public public
 
 # Switch to non-root user
 USER nextjs
