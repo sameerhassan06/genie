@@ -1,39 +1,32 @@
-# Coolify Deployment 404 Fix
+# Deployment Fix - Static File Path Correction
 
 ## Issue Identified
-The 404 errors indicate the container is running but the Node.js application isn't serving files correctly. This is likely due to missing static files or startup issues in production mode.
+The container was crashing with "Cannot find package 'vite'" error because:
+1. The server expects static files at `dist/public` relative to the server location
+2. Our Dockerfile was copying them to `/app/public` instead
 
-## Root Causes
-1. Static files (frontend build) may not be properly served
-2. Application might not be starting correctly in production
-3. Missing package.json in production container
-
-## Fix Applied
-Updated Dockerfile to ensure:
-- package.json is copied to production stage
-- Static files are properly included
-- Application has all necessary files to start
-
-## Quick Test Commands
-Check if the container is running properly:
-
-```bash
-# In Coolify container logs, look for:
-# "serving on port 5000" - indicates app started
-# Any error messages during startup
+## Root Cause
+Looking at `server/vite.ts`, the `serveStatic` function resolves the path as:
+```typescript
+const distPath = path.resolve(import.meta.dirname, "public");
 ```
 
-## Manual Container Debug (if needed)
-If the issue persists, you can debug by:
+Since `import.meta.dirname` points to `/app/dist` (where the compiled server is), it expects static files at `/app/dist/public`.
 
-1. **Check Coolify Logs**: Look for application startup errors
-2. **Restart Container**: Force restart in Coolify dashboard
-3. **Verify Environment**: Ensure all environment variables are set
+## Fix Applied
+Updated Dockerfile to copy static files to the correct location:
+```dockerfile
+# Copy static files to where the server expects them (dist/public)
+COPY --from=builder /app/dist/public ./dist/public
+```
 
-## Expected Fix
-After the updated Dockerfile is deployed:
-- Health check should respond at `/api/health`
-- Main application should load at root URL
-- Both superadmin and business logins should work
+## Next Steps
+Push this fix and redeploy:
 
-The application should serve the React frontend and handle API routes properly.
+```bash
+git add Dockerfile
+git commit -m "Fix static file path for production server"
+git push origin main
+```
+
+This should resolve the container crash and make your platform accessible at the Coolify URL.

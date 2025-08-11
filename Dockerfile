@@ -32,8 +32,8 @@ RUN npm ci --only=production && npm cache clean --force
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist
 
-# Copy static files directly to expected location
-COPY --from=builder /app/dist/public ./public
+# Copy static files to where the server expects them (dist/public)
+COPY --from=builder /app/dist/public ./dist/public
 
 # Expose port
 EXPOSE 5000
